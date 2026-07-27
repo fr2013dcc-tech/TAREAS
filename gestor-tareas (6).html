@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tablero de Tareas · Quick Help</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF7;
+    --surface:#FFFFFF;
+    --ink:#141414;
+    --ink-soft:#6B6B64;
+    --line:#E5E4DE;
+    --line-soft:#F0EFE9;
+    --yellow:#FFD100;
+    --yellow-deep:#E8B800;
+    --red:#E23B2E;
+    --red-bg:#FDECEA;
+    --blue:#2563EB;
+    --blue-bg:#EAF0FE;
+    --orange:#E8720C;
+    --orange-bg:#FDEEDF;
+    --green:#16A34A;
+    --green-bg:#E7F5EC;
+    --shadow:0 1px 2px rgba(20,20,20,.04),0 4px 16px rgba(20,20,20,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+
+  /* ---- Cinta superior tipo señalización ---- */
+  .hazard{
+    height:6px;
+    background:repeating-linear-gradient(-45deg,var(--yellow) 0 22px,#141414 22px 44px);
+  }
+  header{
+    background:#141414;
+    color:#fff;
+    padding:22px 24px 20px;
+  }
+  .header-inner{max-width:1180px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .mark{
+    width:44px;height:44px;flex:none;border-radius:10px;
+    background:var(--yellow);color:#141414;
+    display:grid;place-items:center;
+    font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;
+    box-shadow:0 0 0 4px rgba(255,209,0,.15);
+  }
+  .brand h1{
+    font-family:'Archivo',sans-serif;font-weight:800;
+    font-size:26px;letter-spacing:-.01em;line-height:1;
+  }
+  .brand p{font-size:12.5px;color:#B7B7AF;margin-top:5px;letter-spacing:.02em}
+  .header-actions{display:flex;gap:8px}
+  .ghost{
+    background:transparent;color:#EDEDE7;border:1px solid #3A3A38;
+    font-family:'Inter';font-size:12.5px;font-weight:600;
+    padding:8px 13px;border-radius:8px;cursor:pointer;transition:.15s;
+  }
+  .ghost:hover{background:#242422;border-color:#4d4d4a}
+
+  /* ---- Resumen ---- */
+  .board{max-width:1180px;margin:0 auto;padding:24px}
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;
+  }
+  .stat{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:15px 16px;position:relative;overflow:hidden;
+  }
+  .stat .num{font-family:'Archivo',sans-serif;font-weight:700;font-size:30px;line-height:1}
+  .stat .lbl{font-size:12px;color:var(--ink-soft);margin-top:6px;font-weight:500}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+  .stat.total::before{background:var(--ink)}
+  .stat.due::before{background:var(--red)}
+  .stat.today::before{background:var(--orange)}
+  .stat.done::before{background:var(--green)}
+  .stat.due .num{color:var(--red)}
+  .stat.today .num{color:var(--orange)}
+  .stat.done .num{color:var(--green)}
+
+  /* ---- Formulario ---- */
+  .composer{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:18px;margin-bottom:20px;box-shadow:var(--shadow);
+  }
+  .composer h2{
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;
+    text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .composer h2::before{content:"";width:16px;height:3px;background:var(--yellow);border-radius:2px}
+  .grid{display:grid;grid-template-columns:2fr 1.3fr 1fr 1fr;gap:12px;align-items:end}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field label{font-size:11.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
+  input,select,textarea{
+    font-family:'Inter';font-size:14px;color:var(--ink);
+    background:#FCFCFB;border:1px solid var(--line);border-radius:9px;
+    padding:10px 12px;width:100%;transition:.15s;
+  }
+  textarea{resize:vertical;min-height:64px;line-height:1.5}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(255,209,0,.25)}
+  select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%236B6B64' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+  .add-btn{
+    grid-column:1/-1;justify-self:start;
+    background:var(--yellow);color:#141414;border:none;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;
+    letter-spacing:.02em;padding:11px 22px;border-radius:9px;cursor:pointer;
+    transition:.15s;display:inline-flex;align-items:center;gap:8px;
+  }
+  .add-btn:hover{background:var(--yellow-deep);transform:translateY(-1px)}
+  .add-btn:active{transform:translateY(0)}
+
+  /* ---- Barra de estados ---- */
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .filters{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    font-family:'Inter';font-size:12.5px;font-weight:600;
+    background:var(--surface);border:1px solid var(--line);color:var(--ink-soft);
+    padding:7px 13px;border-radius:20px;cursor:pointer;transition:.15s;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .chip:hover{border-color:var(--ink)}
+  .chip.active{background:#141414;color:#fff;border-color:#141414}
+  .chip .count{
+    font-size:11px;background:rgba(0,0,0,.08);padding:1px 6px;border-radius:10px;font-weight:700;
+  }
+  .chip.active .count{background:var(--yellow);color:#141414}
+  .sort{display:flex;align-items:center;gap:8px}
+  .sort label{font-size:12px;color:var(--ink-soft);font-weight:500}
+  .sort select{padding:7px 30px 7px 11px;font-size:12.5px;width:auto}
+
+  /* ---- Fila de refinar (cliente / fecha / buscar) ---- */
+  .refine{
+    display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;
+    padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  }
+  .refine .r-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+  .refine .r-label::after{content:"";display:inline-block;width:1px;height:14px;background:var(--line);margin-left:10px;vertical-align:middle}
+  .r-field{position:relative;display:flex;align-items:center}
+  .r-field svg{position:absolute;left:11px;pointer-events:none;color:var(--ink-soft)}
+  .refine select{padding:8px 30px 8px 34px;font-size:13px;width:auto;min-width:158px}
+  .refine .search{position:relative;flex:1;min-width:180px}
+  .refine .search input{padding:8px 12px 8px 34px;font-size:13px}
+  .refine .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--ink-soft)}
+  .refine input[type=search]::-webkit-search-cancel-button{cursor:pointer}
+  .clear{
+    background:transparent;border:1px solid var(--line);color:var(--ink-soft);
+    font-family:'Inter';font-size:12px;font-weight:600;padding:8px 13px;border-radius:8px;
+    cursor:pointer;transition:.15s;white-space:nowrap;
+  }
+  .clear:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+  .clear[hidden]{display:none}
+  .result-line{font-size:12px;color:var(--ink-soft);margin:-6px 2px 12px;font-weight:500}
+  .result-line b{color:var(--ink);font-weight:700}
+
+  /* ---- Lista ---- */
+  .list{display:flex;flex-direction:column;gap:10px}
+  .task{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    box-shadow:var(--shadow);transition:.15s;overflow:hidden;
+  }
+  .task:hover{border-color:#d8d7cf}
+  .task-row{
+    padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+  }
+  .task.completada{opacity:.62}
+  .task.completada .t-title{text-decoration:line-through;text-decoration-color:var(--ink-soft)}
+
+  .check{
+    width:24px;height:24px;flex:none;border:2px solid var(--line);border-radius:7px;
+    cursor:pointer;transition:.15s;display:grid;place-items:center;background:#fff;
+  }
+  .check:hover{border-color:var(--green)}
+  .check svg{opacity:0;transition:.15s}
+  .task.completada .check{background:var(--green);border-color:var(--green)}
+  .task.completada .check svg{opacity:1}
+
+  .t-main{min-width:0}
+  .t-title{font-weight:600;font-size:15px;line-height:1.3;word-break:break-word}
+  .t-meta{display:flex;align-items:center;gap:12px;margin-top:6px;flex-wrap:wrap}
+  .t-client{font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+  .t-client:hover{color:var(--ink)}
+  .t-client svg{opacity:.6}
+  .t-created{font-size:12px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:5px;opacity:.85}
+  .t-created svg{opacity:.55}
+  .due{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:7px}
+  .due.overdue{background:var(--red-bg);color:var(--red)}
+  .due.soon{background:var(--orange-bg);color:var(--orange)}
+  .due.ok{background:var(--line-soft);color:var(--ink-soft)}
+  .due.none{background:var(--line-soft);color:var(--ink-soft)}
+
+  .prio{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:5px}
+  .prio::before{content:"";width:7px;height:7px;border-radius:50%}
+  .prio.alta{background:var(--red-bg);color:var(--red)}
+  .prio.alta::before{background:var(--red)}
+  .prio.media{background:var(--orange-bg);color:var(--orange)}
+  .prio.media::before{background:var(--orange)}
+  .prio.baja{background:var(--line-soft);color:var(--ink-soft)}
+  .prio.baja::before{background:var(--ink-soft)}
+
+  .t-right{display:flex;align-items:center;gap:8px}
+  .status-sel{
+    font-size:12px;font-weight:600;padding:6px 26px 6px 11px;border-radius:8px;
+    border:1px solid transparent;cursor:pointer;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 9px center;width:auto;
+  }
+  .status-sel.pendiente{background-color:var(--line-soft);color:var(--ink)}
+  .status-sel.progreso{background-color:var(--blue-bg);color:var(--blue)}
+  .status-sel.bloqueada{background-color:var(--orange-bg);color:var(--orange)}
+  .status-sel.completada{background-color:var(--green-bg);color:var(--green)}
+  .status-sel:focus{outline:none;box-shadow:0 0 0 3px rgba(255,209,0,.3)}
+
+  .icon-btn{
+    width:32px;height:32px;border:1px solid var(--line);background:#fff;border-radius:8px;
+    cursor:pointer;display:grid;place-items:center;color:var(--ink-soft);transition:.15s;position:relative;
+  }
+  .icon-btn:hover{border-color:var(--ink);color:var(--ink)}
+  .icon-btn.del:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+  .icon-btn.notes.has{border-color:var(--yellow-deep);color:#141414}
+  .icon-btn.notes.open{background:#141414;border-color:#141414;color:#fff}
+  .note-badge{
+    position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;padding:0 4px;
+    background:var(--yellow);color:#141414;border-radius:9px;
+    font-size:10px;font-weight:700;display:grid;place-items:center;
+  }
+  .icon-btn.notes.open .note-badge{background:#fff}
+
+  /* ---- Panel de avances / bitácora ---- */
+  .task-notes{
+    border-top:1px solid var(--line-soft);
+    background:#FCFCFA;padding:16px;
+  }
+  .notes-head{
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--ink-soft);margin-bottom:11px;display:flex;align-items:center;gap:8px;
+  }
+  .notes-head::before{content:"";width:14px;height:3px;background:var(--yellow);border-radius:2px}
+  .note-compose{display:flex;gap:8px;align-items:flex-end;margin-bottom:14px}
+  .note-compose textarea{min-height:44px;background:#fff}
+  .note-add{
+    flex:none;background:#141414;color:#fff;border:none;
+    font-family:'Inter';font-weight:600;font-size:12.5px;
+    padding:11px 16px;border-radius:9px;cursor:pointer;transition:.15s;white-space:nowrap;
+  }
+  .note-add:hover{background:#2b2b28}
+  .note-list{display:flex;flex-direction:column;gap:0}
+  .note-item{
+    display:flex;gap:11px;padding:10px 0;border-top:1px dashed var(--line);
+  }
+  .note-item:first-child{border-top:none;padding-top:2px}
+  .note-tick{width:8px;flex:none;display:flex;justify-content:center;padding-top:5px}
+  .note-tick span{width:7px;height:7px;border-radius:50%;background:var(--yellow-deep)}
+  .note-body{flex:1;min-width:0}
+  .note-text{font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+  .note-time{font-size:11px;color:var(--ink-soft);margin-top:3px;font-weight:500}
+  .note-del{
+    flex:none;background:transparent;border:none;color:var(--ink-soft);cursor:pointer;
+    font-size:11px;padding:2px 6px;border-radius:6px;height:fit-content;transition:.15s;
+  }
+  .note-del:hover{color:var(--red);background:var(--red-bg)}
+  .note-empty{font-size:12.5px;color:var(--ink-soft);font-style:italic;padding:2px 0}
+  mark{background:var(--yellow);color:#141414;border-radius:3px;padding:0 1px}
+  .due.clickable{cursor:pointer}
+  .due.clickable:hover{box-shadow:0 0 0 2px rgba(20,20,20,.14) inset}
+  .note-item.kind-date .note-tick span{background:var(--blue)}
+
+  /* ---- Avance por etapas (stepper) ---- */
+  .stage-row{display:flex;align-items:center;gap:10px;margin-top:11px;flex-wrap:wrap}
+  .progress{display:flex;gap:3px;width:84px;flex:none}
+  .seg{height:6px;flex:1;border-radius:3px;background:var(--line);transition:.2s}
+  .stage-row.s-noinit .seg.fill{background:var(--ink-soft)}
+  .stage-row.s-doing  .seg.fill{background:var(--blue)}
+  .stage-row.s-done   .seg.fill{background:var(--green)}
+  .stage-lbl{font-size:12px;font-weight:700;letter-spacing:.02em;min-width:70px}
+  .stage-row.s-noinit .stage-lbl{color:var(--ink-soft)}
+  .stage-row.s-doing  .stage-lbl{color:var(--blue)}
+  .stage-row.s-done   .stage-lbl{color:var(--green)}
+  .stage-actions{display:flex;gap:6px}
+  .stage-btn{
+    font-family:'Inter';font-size:11.5px;font-weight:700;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    padding:5px 11px;border-radius:7px;cursor:pointer;transition:.15s;white-space:nowrap;
+  }
+  .stage-btn:hover{border-color:var(--ink)}
+  .stage-btn.go{background:var(--yellow);border-color:var(--yellow)}
+  .stage-btn.go:hover{background:var(--yellow-deep);border-color:var(--yellow-deep)}
+  .stage-btn.go.finish{background:var(--green);border-color:var(--green);color:#fff}
+  .stage-btn.go.finish:hover{background:#12833b;border-color:#12833b}
+  .stage-btn.back{padding:5px 9px;color:var(--ink-soft)}
+  .stage-btn.back:hover{color:var(--ink)}
+
+  /* ---- Modal cambiar fecha ---- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(20,20,20,.55);
+    display:grid;place-items:center;padding:20px;z-index:100;
+    opacity:0;pointer-events:none;transition:.18s;
+  }
+  .modal-overlay.show{opacity:1;pointer-events:auto}
+  .modal{
+    background:var(--surface);border-radius:16px;width:100%;max-width:450px;
+    box-shadow:0 24px 60px rgba(0,0,0,.3);overflow:hidden;
+    transform:translateY(10px) scale(.98);transition:.18s;
+  }
+  .modal-overlay.show .modal{transform:none}
+  .modal-top{background:#141414;color:#fff;padding:15px 20px;display:flex;align-items:center;gap:10px}
+  .modal-top .mt-icon{font-size:18px;line-height:1}
+  .modal-top h3{font-family:'Archivo',sans-serif;font-weight:700;font-size:16px}
+  .modal-body{padding:20px}
+  .modal .task-ref{font-weight:600;font-size:15px;margin-bottom:4px;word-break:break-word}
+  .modal .dm-current-row{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px}
+  .modal .dm-current-row span{color:var(--ink);font-weight:600}
+  .modal label{display:block;font-size:11.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;margin:14px 0 6px}
+  .modal label.first{margin-top:0}
+  .modal input,.modal textarea{width:100%}
+  .modal textarea{min-height:70px}
+  .dm-error{color:var(--red);font-size:12.5px;font-weight:600;margin-top:10px;min-height:16px}
+  .actions{display:flex;gap:10px;justify-content:flex-end;padding:0 20px 20px}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-family:'Inter';font-size:13.5px;font-weight:600;padding:10px 18px;border-radius:9px;cursor:pointer;transition:.15s}
+  .btn-ghost:hover{background:var(--line-soft)}
+  .btn-primary{background:var(--yellow);border:none;color:#141414;font-family:'Archivo',sans-serif;font-weight:700;font-size:13.5px;padding:10px 20px;border-radius:9px;cursor:pointer;transition:.15s}
+  .btn-primary:hover{background:var(--yellow-deep)}
+
+  /* ---- Vacío ---- */
+  .empty{
+    text-align:center;padding:60px 20px;color:var(--ink-soft);
+    background:var(--surface);border:1px dashed var(--line);border-radius:14px;
+  }
+  .empty .em-mark{
+    width:56px;height:56px;margin:0 auto 16px;border-radius:14px;
+    background:var(--line-soft);display:grid;place-items:center;
+  }
+  .empty h3{font-family:'Archivo',sans-serif;font-weight:700;color:var(--ink);font-size:17px;margin-bottom:6px}
+  .empty p{font-size:13.5px;max-width:340px;margin:0 auto}
+
+  footer{max-width:1180px;margin:0 auto;padding:14px 24px 40px;color:var(--ink-soft);font-size:11.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media(max-width:820px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .grid{grid-template-columns:1fr 1fr}
+    .grid .field.full{grid-column:1/-1}
+    .refine select{min-width:0;flex:1}
+    .r-field{flex:1}
+  }
+  @media(max-width:560px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .grid{grid-template-columns:1fr}
+    .refine{flex-direction:column;align-items:stretch}
+    .r-field,.refine .search{width:100%}
+    .refine select{width:100%}
+    .clear{width:100%}
+    .task-row{grid-template-columns:auto 1fr;grid-template-areas:"check main" "right right"}
+    .check{grid-area:check}.t-main{grid-area:main}
+    .t-right{grid-area:right;justify-content:flex-end;padding-top:4px;border-top:1px solid var(--line-soft)}
+    .toolbar{align-items:flex-start;flex-direction:column}
+    .note-compose{flex-direction:column;align-items:stretch}
+    .note-add{width:100%}
+  }
+</style>
+</head>
+<body>
+  <div class="hazard"></div>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="mark">QH</div>
+        <div>
+          <h1>Tablero de Tareas</h1>
+          <p>OPERACIONES LAST MILE · QUICK HELP SAS</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="ghost" id="exportBtn">Exportar respaldo</button>
+        <button class="ghost" id="importBtn">Importar</button>
+        <input type="file" id="importFile" accept="application/json" hidden>
+      </div>
+    </div>
+  </header>
+
+  <main class="board">
+    <!-- Resumen -->
+    <section class="stats">
+      <div class="stat total"><div class="num" id="s-total">0</div><div class="lbl">Tareas activas</div></div>
+      <div class="stat due"><div class="num" id="s-due">0</div><div class="lbl">Vencidas</div></div>
+      <div class="stat today"><div class="num" id="s-today">0</div><div class="lbl">Vencen hoy</div></div>
+      <div class="stat done"><div class="num" id="s-done">0</div><div class="lbl">Completadas</div></div>
+    </section>
+
+    <!-- Nueva tarea -->
+    <section class="composer">
+      <h2>Nueva tarea</h2>
+      <div class="grid">
+        <div class="field full">
+          <label for="f-title">Tarea</label>
+          <input type="text" id="f-title" placeholder="Ej: Cierre de novedades Panamericana" maxlength="140">
+        </div>
+        <div class="field">
+          <label for="f-client">Cliente / Proyecto</label>
+          <input type="text" id="f-client" list="client-suggestions" placeholder="Coopidrogas, Ángeles Custodios…" maxlength="60">
+          <datalist id="client-suggestions"></datalist>
+        </div>
+        <div class="field">
+          <label for="f-date">Fecha límite</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="field">
+          <label for="f-prio">Prioridad</label>
+          <select id="f-prio">
+            <option value="media">Media</option>
+            <option value="alta">Alta</option>
+            <option value="baja">Baja</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="f-desc">Descripción / notas (opcional)</label>
+          <textarea id="f-desc" placeholder="En qué consiste, contexto, con quién, primer paso…"></textarea>
+        </div>
+        <button class="add-btn" id="addBtn">＋ Agregar tarea</button>
+      </div>
+    </section>
+
+    <!-- Estados -->
+    <div class="toolbar">
+      <div class="filters" id="filters">
+        <button class="chip active" data-filter="all">Todas <span class="count" id="c-all">0</span></button>
+        <button class="chip" data-filter="pendiente">Pendientes <span class="count" id="c-pendiente">0</span></button>
+        <button class="chip" data-filter="progreso">En progreso <span class="count" id="c-progreso">0</span></button>
+        <button class="chip" data-filter="bloqueada">Bloqueadas <span class="count" id="c-bloqueada">0</span></button>
+        <button class="chip" data-filter="completada">Completadas <span class="count" id="c-completada">0</span></button>
+      </div>
+      <div class="sort">
+        <label for="sortSel">Ordenar por</label>
+        <select id="sortSel">
+          <option value="date">Fecha límite</option>
+          <option value="prio">Prioridad</option>
+          <option value="created">Recién creadas</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Refinar: cliente / fecha / buscar -->
+    <div class="refine">
+      <span class="r-label">Refinar</span>
+      <div class="r-field">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="8" rx="1.2" stroke="currentColor" stroke-width="1.3"/><path d="M5 4V3a2 2 0 0 1 4 0v1" stroke="currentColor" stroke-width="1.3"/></svg>
+        <select id="clientSel" title="Filtrar por cliente"><option value="">Todos los clientes</option></select>
+      </div>
+      <div class="r-field">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="9" rx="1.2" stroke="currentColor" stroke-width="1.3"/><path d="M2 6h10M5 2v2M9 2v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <select id="dateSel" title="Filtrar por fecha">
+          <option value="all">Cualquier fecha</option>
+          <option value="overdue">Vencidas</option>
+          <option value="today">Vencen hoy</option>
+          <option value="week">Próximos 7 días</option>
+          <option value="future">Con fecha futura</option>
+          <option value="none">Sin fecha</option>
+        </select>
+      </div>
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <input type="search" id="searchInput" placeholder="Buscar en tareas y avances…">
+      </div>
+      <button class="clear" id="clearFilters" hidden>Limpiar filtros</button>
+    </div>
+
+    <div class="result-line" id="resultLine" hidden></div>
+
+    <!-- Lista -->
+    <section class="list" id="list"></section>
+  </main>
+
+  <footer>
+    <span>Tus tareas se guardan en este navegador. Usa «Exportar respaldo» para no perderlas.</span>
+    <span id="last-save"></span>
+  </footer>
+
+  <!-- Modal: cambiar fecha límite -->
+  <div class="modal-overlay" id="dateModal">
+    <div class="modal">
+      <div class="modal-top">
+        <span class="mt-icon">📅</span>
+        <h3>Cambiar fecha límite</h3>
+      </div>
+      <div class="modal-body">
+        <div class="task-ref" id="dm-taskname">—</div>
+        <div class="dm-current-row">Fecha actual: <span id="dm-current">—</span></div>
+        <label class="first" for="dm-date">Nueva fecha límite</label>
+        <input type="date" id="dm-date">
+        <label for="dm-reason">Motivo del cambio (obligatorio)</label>
+        <textarea id="dm-reason" placeholder="Ej: El cliente reprogramó la entrega; se corre 2 días."></textarea>
+        <div class="dm-error" id="dm-error"></div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" id="dm-cancel">Cancelar</button>
+        <button class="btn-primary" id="dm-save">Guardar cambio</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  const KEY = "qh_tareas_v1";
+  const $ = s => document.querySelector(s);
+
+  let tasks = load();
+  let filter = "all";          // estado
+  let sortBy = "date";
+  let filterClient = "";       // "" = todos
+  let filterDate = "all";      // all|overdue|today|week|future|none
+  let searchText = "";
+  const expanded = new Set();
+
+  const STATUS = {
+    pendiente:  {label:"Pendiente",   cls:"pendiente"},
+    progreso:   {label:"En progreso", cls:"progreso"},
+    bloqueada:  {label:"Bloqueada",   cls:"bloqueada"},
+    completada: {label:"Completada",  cls:"completada"}
+  };
+  const PRIO = {alta:"Alta", media:"Media", baja:"Baja"};
+  const PRIO_RANK = {alta:0, media:1, baja:2};
+
+  const STAGES = {
+    sin_iniciar: {label:"Sin iniciar", idx:0, next:"iniciada",   cls:"s-noinit"},
+    iniciada:    {label:"Iniciada",    idx:1, next:"finalizada", prev:"sin_iniciar", cls:"s-doing"},
+    finalizada:  {label:"Finalizada",  idx:2, prev:"iniciada",   cls:"s-done"}
+  };
+  const STAGE_ORDER = ["sin_iniciar","iniciada","finalizada"];
+  // Sincronización etapa <-> estado (para que los filtros y contadores se muevan juntos)
+  const STAGE_TO_STATUS = { sin_iniciar:"pendiente", iniciada:"progreso", finalizada:"completada" };
+  const STATUS_TO_STAGE = { pendiente:"sin_iniciar", progreso:"iniciada", completada:"finalizada" };
+  function deriveStage(t){
+    if(t.stage && STAGE_ORDER.includes(t.stage)) return t.stage;
+    if(t.status==="completada") return "finalizada";
+    if(t.status==="progreso")   return "iniciada";
+    return "sin_iniciar";
+  }
+
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem(KEY));
+      if(!Array.isArray(d)) return [];
+      return d.map(t=>{
+        const stage = deriveStage(t);
+        // Si no está bloqueada, alinea el estado con la etapa de avance
+        const status = (t.status==="bloqueada") ? "bloqueada" : (STAGE_TO_STATUS[stage] || "pendiente");
+        return {
+          ...t,
+          notes: Array.isArray(t.notes)?t.notes:[],
+          created: t.created || deriveCreated(t.id),
+          stage,
+          status
+        };
+      });
+    }catch(e){ return []; }
+  }
+  function save(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify(tasks));
+      const t = new Date();
+      $("#last-save").textContent = "Guardado " + t.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+    }catch(e){
+      $("#last-save").textContent = "No se pudo guardar en este navegador";
+    }
+  }
+
+  // --- Fechas ---
+  function todayStr(){
+    const d = new Date();
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function daysUntil(dateStr){
+    if(!dateStr) return null;
+    const t = new Date(todayStr()+"T00:00:00");
+    const d = new Date(dateStr+"T00:00:00");
+    return Math.round((d - t) / 86400000);
+  }
+  function dueInfo(task){
+    if(task.status === "completada") return {cls:"none", text:"Completada"};
+    if(!task.date) return {cls:"none", text:"Sin fecha"};
+    const n = daysUntil(task.date);
+    const fmt = new Date(task.date+"T00:00:00").toLocaleDateString("es-CO",{day:"numeric",month:"short"});
+    if(n < 0)  return {cls:"overdue", text:"Vencida · "+fmt+" ("+Math.abs(n)+"d)"};
+    if(n === 0)return {cls:"soon",    text:"Vence hoy · "+fmt};
+    if(n === 1)return {cls:"soon",    text:"Mañana · "+fmt};
+    if(n <= 3) return {cls:"soon",    text:"En "+n+" días · "+fmt};
+    return {cls:"ok", text:fmt};
+  }
+  function fmtStamp(iso){
+    const d = new Date(iso);
+    return d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"}) + " · " +
+           d.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+  }
+  function deriveCreated(id){
+    // los ids nuevos son Date.now(); recuperar la fecha para tareas anteriores
+    if(typeof id==="number" && id>1e12 && id<4e12) return new Date(id).toISOString();
+    return null;
+  }
+  function fmtCreatedShort(iso){
+    return new Date(iso).toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});
+  }
+
+  function svgCheck(){return '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5l3 3 6-6.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+  function svgClient(){return '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="8" rx="1.2" stroke="currentColor" stroke-width="1.3"/><path d="M5 4V3a2 2 0 0 1 4 0v1" stroke="currentColor" stroke-width="1.3"/></svg>';}
+  function svgNotes(){return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v7l-3 3H3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10 13v-3h3M5.5 6.5h5M5.5 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';}
+  function svgClock(){return '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.2v3l2 1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+  function svgEdit(){return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M11 2.5l2.5 2.5L6 12.5l-3.2.7.7-3.2L11 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>';}
+  function svgDel(){return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+
+  function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+  function highlight(s){
+    const safe = esc(s);
+    const q = searchText.trim();
+    if(!q) return safe;
+    try{
+      const re = new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");
+      return safe.replace(re,"<mark>$1</mark>");
+    }catch(e){ return safe; }
+  }
+
+  // --- Clientes dinámicos ---
+  function getClients(){
+    const set = new Set();
+    tasks.forEach(t=>{ if(t.client && t.client.trim()) set.add(t.client.trim()); });
+    return [...set].sort((a,b)=>a.localeCompare(b,"es",{sensitivity:"base"}));
+  }
+  function syncClientControls(){
+    const clients = getClients();
+    // Selector de filtro
+    const sel = $("#clientSel");
+    const prev = filterClient;
+    sel.innerHTML = '<option value="">Todos los clientes</option>' +
+      clients.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+    if(prev && clients.includes(prev)) sel.value = prev;
+    else { filterClient = ""; sel.value = ""; }
+    // Sugerencias del formulario
+    $("#client-suggestions").innerHTML = clients.map(c=>`<option value="${esc(c)}">`).join("");
+  }
+
+  // --- Filtros combinados ---
+  function dateMatch(t){
+    if(filterDate==="all") return true;
+    const n = daysUntil(t.date);
+    if(filterDate==="none")   return !t.date;
+    if(n===null) return false;
+    if(filterDate==="overdue")return n<0 && t.status!=="completada";
+    if(filterDate==="today")  return n===0;
+    if(filterDate==="week")   return n>=0 && n<=7;
+    if(filterDate==="future") return n>0;
+    return true;
+  }
+  function searchMatch(t){
+    const q = searchText.trim().toLowerCase();
+    if(!q) return true;
+    if((t.title||"").toLowerCase().includes(q)) return true;
+    if((t.client||"").toLowerCase().includes(q)) return true;
+    return (t.notes||[]).some(n=>(n.text||"").toLowerCase().includes(q));
+  }
+  function passesRefine(t){
+    if(filterClient && (t.client||"").trim()!==filterClient) return false;
+    if(!dateMatch(t)) return false;
+    if(!searchMatch(t)) return false;
+    return true;
+  }
+
+  // --- Render ---
+  function render(){
+    syncClientControls();
+    updateStats();
+
+    const base = tasks.filter(passesRefine);          // cliente + fecha + búsqueda
+    updateChipCounts(base);
+
+    let visible = base.filter(t => filter==="all" ? true : t.status===filter);
+    visible.sort((a,b)=>{
+      if(sortBy==="prio"){
+        if(PRIO_RANK[a.prio]!==PRIO_RANK[b.prio]) return PRIO_RANK[a.prio]-PRIO_RANK[b.prio];
+        return dateSort(a,b);
+      }
+      if(sortBy==="created") return b.id - a.id;
+      return dateSort(a,b);
+    });
+
+    updateFilterUI(base.length, visible.length);
+
+    const list = $("#list");
+    list.innerHTML = visible.length ? visible.map(renderTask).join("") : emptyState();
+    if(visible.length) bindTaskEvents();
+  }
+
+  function dateSort(a,b){
+    if((a.status==="completada")!==(b.status==="completada")) return a.status==="completada"?1:-1;
+    if(!a.date && !b.date) return 0;
+    if(!a.date) return 1;
+    if(!b.date) return -1;
+    return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+  }
+
+  function renderTask(t){
+    const di = dueInfo(t);
+    const st = STATUS[t.status] || STATUS.pendiente;
+    const notes = t.notes || [];
+    const isOpen = expanded.has(t.id);
+    const notesBtnCls = "icon-btn notes" + (notes.length?" has":"") + (isOpen?" open":"");
+    return `
+    <div class="task ${t.status==='completada'?'completada':''}" data-id="${t.id}">
+      <div class="task-row">
+        <div class="check" data-act="toggle" title="Marcar completada">${svgCheck()}</div>
+        <div class="t-main">
+          <div class="t-title">${highlight(t.title)}</div>
+          <div class="t-meta">
+            ${t.client?`<span class="t-client" data-act="client-filter" title="Ver solo ${esc(t.client)}">${svgClient()}${highlight(t.client)}</span>`:""}
+            <span class="due ${di.cls} clickable" data-act="date" title="Cambiar fecha límite (requiere motivo)">${di.text}</span>
+            <span class="prio ${t.prio}">${PRIO[t.prio]}</span>
+            ${t.created?`<span class="t-created" title="Creada el ${fmtStamp(t.created)}">${svgClock()}Creada ${fmtCreatedShort(t.created)}</span>`:""}
+          </div>
+          ${renderStage(t)}
+        </div>
+        <div class="t-right">
+          <button class="${notesBtnCls}" data-act="notes" title="Avances / bitácora">
+            ${svgNotes()}${notes.length?`<span class="note-badge">${notes.length}</span>`:""}
+          </button>
+          <select class="status-sel ${st.cls}" data-act="status">
+            ${Object.keys(STATUS).map(k=>`<option value="${k}" ${k===t.status?"selected":""}>${STATUS[k].label}</option>`).join("")}
+          </select>
+          <button class="icon-btn" data-act="edit" title="Editar título y cliente">${svgEdit()}</button>
+          <button class="icon-btn del" data-act="del" title="Eliminar">${svgDel()}</button>
+        </div>
+      </div>
+      ${isOpen?renderNotesPanel(t):""}
+    </div>`;
+  }
+
+  function renderStage(t){
+    const stg = STAGE_ORDER.includes(t.stage) ? t.stage : "sin_iniciar";
+    const info = STAGES[stg];
+    const filled = info.idx + 1;
+    const segs = [0,1,2].map(i=>`<span class="seg ${i<filled?"fill":""}"></span>`).join("");
+    let action = "";
+    if(stg==="sin_iniciar"){
+      action = `<button class="stage-btn go" data-act="stage-next">▶ Iniciar</button>`;
+    }else if(stg==="iniciada"){
+      action = `<button class="stage-btn back" data-act="stage-prev" title="Volver a Sin iniciar">↩</button>`+
+               `<button class="stage-btn go finish" data-act="stage-next">✓ Finalizar</button>`;
+    }else{
+      action = `<button class="stage-btn back" data-act="stage-prev">↩ Reabrir</button>`;
+    }
+    return `<div class="stage-row ${info.cls}">
+      <div class="progress" title="Avance: ${info.label}">${segs}</div>
+      <span class="stage-lbl">${info.label}</span>
+      <div class="stage-actions">${action}</div>
+    </div>`;
+  }
+
+  function renderNotesPanel(t){
+    const notes = (t.notes||[]).slice().sort((a,b)=> b.ts.localeCompare(a.ts));
+    const items = notes.length
+      ? notes.map(n=>`
+          <div class="note-item ${n.kind==='date'?'kind-date':''}">
+            <div class="note-tick"><span></span></div>
+            <div class="note-body">
+              <div class="note-text">${highlight(n.text)}</div>
+              <div class="note-time">${fmtStamp(n.ts)}</div>
+            </div>
+            <button class="note-del" data-act="note-del" data-nid="${n.id}">Quitar</button>
+          </div>`).join("")
+      : `<div class="note-empty">Aún no hay avances. Escribe en qué quedó esta tarea.</div>`;
+    return `
+    <div class="task-notes">
+      <div class="notes-head">Avances / Bitácora</div>
+      <div class="note-compose">
+        <textarea data-act="note-input" placeholder="Ej: Hablé con Julian, falta confirmar cierre con Coopidrogas. Retomar el lunes."></textarea>
+        <button class="note-add" data-act="note-add">Agregar avance</button>
+      </div>
+      <div class="note-list">${items}</div>
+    </div>`;
+  }
+
+  function emptyState(){
+    const anyFilter = filter!=="all" || filterClient || filterDate!=="all" || searchText.trim();
+    const msg = tasks.length===0
+      ? {h:"Sin tareas todavía", p:"Agrega tu primera tarea con su fecha límite y prioridad para empezar a llevar el control."}
+      : anyFilter
+        ? {h:"Nada con estos filtros", p:"Ninguna tarea coincide con la combinación actual. Ajusta los filtros o límpialos."}
+        : {h:"Nada en este filtro", p:"No tienes tareas en este estado."};
+    return `<div class="empty">
+      <div class="em-mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 6h14M5 12h14M5 18h9" stroke="#B7B7AF" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <h3>${msg.h}</h3><p>${msg.p}</p></div>`;
+  }
+
+  function updateStats(){
+    const active = tasks.filter(t=>t.status!=="completada");
+    let overdue=0, today=0;
+    active.forEach(t=>{
+      const n = daysUntil(t.date);
+      if(n===null) return;
+      if(n<0) overdue++;
+      else if(n===0) today++;
+    });
+    $("#s-total").textContent = active.length;
+    $("#s-due").textContent   = overdue;
+    $("#s-today").textContent = today;
+    $("#s-done").textContent  = tasks.filter(t=>t.status==="completada").length;
+  }
+
+  function updateChipCounts(base){
+    $("#c-all").textContent        = base.length;
+    $("#c-pendiente").textContent  = base.filter(t=>t.status==="pendiente").length;
+    $("#c-progreso").textContent   = base.filter(t=>t.status==="progreso").length;
+    $("#c-bloqueada").textContent  = base.filter(t=>t.status==="bloqueada").length;
+    $("#c-completada").textContent = base.filter(t=>t.status==="completada").length;
+  }
+
+  function updateFilterUI(baseCount, visibleCount){
+    const anyFilter = filter!=="all" || filterClient || filterDate!=="all" || searchText.trim();
+    $("#clearFilters").hidden = !anyFilter;
+    const line = $("#resultLine");
+    if(anyFilter && tasks.length){
+      const parts = [];
+      if(filterClient) parts.push("cliente <b>"+esc(filterClient)+"</b>");
+      const dateLbls={overdue:"vencidas",today:"vencen hoy",week:"próximos 7 días",future:"con fecha futura",none:"sin fecha"};
+      if(filterDate!=="all") parts.push(dateLbls[filterDate]);
+      if(searchText.trim()) parts.push('búsqueda "<b>'+esc(searchText.trim())+'</b>"');
+      const detail = parts.length ? " · "+parts.join(" · ") : "";
+      line.innerHTML = "Mostrando <b>"+visibleCount+"</b> de <b>"+tasks.length+"</b> tareas"+detail;
+      line.hidden = false;
+    }else{
+      line.hidden = true;
+    }
+  }
+
+  // --- Eventos de tarjeta ---
+  function bindTaskEvents(){
+    document.querySelectorAll(".task").forEach(el=>{
+      const id = Number(el.dataset.id);
+      el.querySelector('[data-act="toggle"]').onclick = ()=>toggleDone(id);
+      el.querySelector('[data-act="status"]').onchange = e=>setStatus(id, e.target.value);
+      el.querySelector('[data-act="notes"]').onclick = ()=>toggleNotes(id);
+      el.querySelector('[data-act="edit"]').onclick = ()=>editTask(id);
+      el.querySelector('[data-act="del"]').onclick = ()=>delTask(id);
+
+      const dbtn = el.querySelector('[data-act="date"]');
+      if(dbtn) dbtn.onclick = ()=>openDateModal(id);
+
+      const sn = el.querySelector('[data-act="stage-next"]');
+      if(sn) sn.onclick = ()=>stageNext(id);
+      const sp = el.querySelector('[data-act="stage-prev"]');
+      if(sp) sp.onclick = ()=>stagePrev(id);
+
+      const cf = el.querySelector('[data-act="client-filter"]');
+      if(cf){ const t=find(id); cf.onclick = ()=>{ filterClient = (t.client||"").trim(); $("#clientSel").value=filterClient; render(); }; }
+
+      const addBtn = el.querySelector('[data-act="note-add"]');
+      if(addBtn){
+        const input = el.querySelector('[data-act="note-input"]');
+        const doAdd = ()=>addNote(id, input.value);
+        addBtn.onclick = doAdd;
+        input.addEventListener("keydown", e=>{ if(e.key==="Enter" && (e.ctrlKey||e.metaKey)) doAdd(); });
+        el.querySelectorAll('[data-act="note-del"]').forEach(b=>{ b.onclick = ()=>delNote(id, b.dataset.nid); });
+      }
+    });
+  }
+
+  function find(id){return tasks.find(t=>t.id===id);}
+  function toggleDone(id){
+    const t=find(id);if(!t)return;
+    if(t.status==="completada"){ t.status="pendiente"; t.stage="sin_iniciar"; }
+    else { t.status="completada"; t.stage="finalizada"; }
+    save();render();
+  }
+  function setStatus(id,val){
+    const t=find(id);if(!t)return;
+    t.status=val;
+    if(val!=="bloqueada") t.stage = STATUS_TO_STAGE[val] || t.stage;  // bloqueada conserva la etapa
+    save();render();
+  }
+  function toggleNotes(id){ if(expanded.has(id)) expanded.delete(id); else expanded.add(id); render(); }
+
+  function setStage(id, stg){
+    const t=find(id); if(!t) return;
+    t.stage = stg;
+    t.status = STAGE_TO_STATUS[stg] || t.status;   // mover la etapa actualiza el estado (y quita bloqueo)
+    save(); render();
+  }
+  function stageNext(id){ const t=find(id); if(!t) return; const nx=STAGES[t.stage||"sin_iniciar"].next; if(nx) setStage(id,nx); }
+  function stagePrev(id){ const t=find(id); if(!t) return; const pv=STAGES[t.stage||"sin_iniciar"].prev; if(pv) setStage(id,pv); }
+
+  function addNote(id, text){
+    const t=find(id); if(!t) return;
+    const clean = (text||"").trim();
+    if(!clean) return;
+    if(!Array.isArray(t.notes)) t.notes=[];
+    const now = Date.now();
+    // no repetir el mismo avance si se pulsa dos veces seguidas
+    const yaExiste = t.notes.some(n => !n.kind && n.text===clean && (now - new Date(n.ts).getTime()) < 1500);
+    if(yaExiste) return;
+    t.notes.push({id:"n"+now, text:clean, ts:new Date(now).toISOString()});
+    save(); render();
+  }
+  function delNote(id, nid){
+    const t=find(id); if(!t) return;
+    t.notes = (t.notes||[]).filter(n=>n.id!==nid);
+    save(); render();
+  }
+
+  function delTask(id){
+    const t=find(id);if(!t)return;
+    if(confirm(`¿Eliminar la tarea "${t.title}"? Se borran también sus avances.`)){
+      tasks=tasks.filter(x=>x.id!==id);expanded.delete(id);save();render();
+    }
+  }
+  function editTask(id){
+    const t=find(id);if(!t)return;
+    const nt = prompt("Editar tarea:", t.title); if(nt===null) return;
+    const nc = prompt("Cliente / Proyecto:", t.client||""); if(nc===null) return;
+    t.title = nt.trim() || t.title;
+    t.client = nc.trim();
+    save();render();
+  }
+
+  // --- Modal: cambiar fecha límite con motivo obligatorio ---
+  let dateModalId = null;
+  function fmtDateLong(dateStr){
+    return new Date(dateStr+"T00:00:00").toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"short",year:"numeric"});
+  }
+  function openDateModal(id){
+    const t=find(id); if(!t) return;
+    dateModalId = id;
+    $("#dm-taskname").textContent = t.title;
+    $("#dm-current").textContent = t.date ? fmtDateLong(t.date) : "Sin fecha límite";
+    $("#dm-date").value = t.date || "";
+    $("#dm-reason").value = "";
+    $("#dm-error").textContent = "";
+    $("#dm-date").style.borderColor = "";
+    $("#dm-reason").style.borderColor = "";
+    $("#dateModal").classList.add("show");
+    setTimeout(()=>$("#dm-date").focus(), 60);
+  }
+  function closeDateModal(){ $("#dateModal").classList.remove("show"); dateModalId=null; }
+  function saveDateChange(){
+    const id = dateModalId;
+    const t = find(id); if(!t){ closeDateModal(); return; }
+    const newDate = $("#dm-date").value || "";
+    const reason  = $("#dm-reason").value.trim();
+    const oldDate = t.date || "";
+    const errs = [];
+    $("#dm-date").style.borderColor = "";
+    $("#dm-reason").style.borderColor = "";
+    if(newDate === oldDate){ errs.push("Elige una fecha distinta a la actual."); $("#dm-date").style.borderColor="var(--red)"; }
+    if(!reason){ errs.push("Escribe el motivo del cambio."); $("#dm-reason").style.borderColor="var(--red)"; }
+    if(errs.length){ $("#dm-error").textContent = errs.join(" "); return; }
+
+    // Cierra el registro ANTES de escribir: si el evento se dispara dos veces
+    // (p. ej. doble toque en móvil), la segunda vez find() ya no encuentra la tarea y no repite.
+    dateModalId = null;
+
+    const oldTxt = oldDate ? fmtDateLong(oldDate) : "Sin fecha";
+    const newTxt = newDate ? fmtDateLong(newDate) : "Sin fecha";
+    const noteText = `📅 Fecha límite: ${oldTxt}  →  ${newTxt}\nMotivo: ${reason}`;
+    t.date = newDate;
+    if(!Array.isArray(t.notes)) t.notes = [];
+
+    // Salvaguarda extra: no anotar la misma nota de fecha dos veces en pocos segundos
+    const now = Date.now();
+    const yaExiste = t.notes.some(n => n.kind==="date" && n.text===noteText && (now - new Date(n.ts).getTime()) < 4000);
+    if(!yaExiste){
+      t.notes.push({ id:"n"+now, kind:"date", text:noteText, ts:new Date(now).toISOString() });
+    }
+    expanded.add(id);            // abrir la bitácora para que veas el registro
+    save(); render();
+    $("#dateModal").classList.remove("show");
+  }
+
+  // --- Agregar ---
+  function addTask(){
+    const title = $("#f-title").value.trim();
+    if(!title){ $("#f-title").focus(); $("#f-title").style.borderColor="var(--red)"; setTimeout(()=>$("#f-title").style.borderColor="",1200); return; }
+    const desc = $("#f-desc").value.trim();
+    const id = Date.now();
+    const nowIso = new Date().toISOString();
+    tasks.push({
+      id, title,
+      client: $("#f-client").value.trim(),
+      date: $("#f-date").value || "",
+      prio: $("#f-prio").value,
+      status: "pendiente",
+      stage: "sin_iniciar",
+      created: nowIso,
+      notes: desc ? [{id:"n"+id, text:desc, ts:nowIso}] : []
+    });
+    $("#f-title").value=""; $("#f-client").value=""; $("#f-date").value=""; $("#f-prio").value="media"; $("#f-desc").value="";
+    $("#f-title").focus();
+    save();render();
+  }
+
+  // --- Exportar / Importar ---
+  function exportData(){
+    const blob = new Blob([JSON.stringify(tasks,null,2)],{type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href=url; a.download="tareas-quickhelp-"+todayStr()+".json";
+    a.click(); URL.revokeObjectURL(url);
+  }
+  function importData(file){
+    const r = new FileReader();
+    r.onload = e=>{
+      try{
+        const data = JSON.parse(e.target.result);
+        if(!Array.isArray(data)) throw new Error();
+        if(confirm("Se reemplazarán las tareas actuales con las del archivo. ¿Continuar?")){
+          tasks = data.map(t=>{
+            const stage = deriveStage(t);
+            const status = (t.status==="bloqueada") ? "bloqueada" : (STAGE_TO_STATUS[stage]||"pendiente");
+            return {
+              id:t.id||Date.now()+Math.floor(Math.random()*1000), title:String(t.title||"Sin título"),
+              client:String(t.client||""), date:t.date||"",
+              prio:PRIO[t.prio]?t.prio:"media", status, stage,
+              created:t.created||deriveCreated(t.id)||new Date().toISOString(),
+              notes:Array.isArray(t.notes)?t.notes.map(n=>({
+                id:n.id||"n"+Date.now()+Math.floor(Math.random()*1000),
+                text:String(n.text||""), ts:n.ts||new Date().toISOString(),
+                kind:n.kind||""
+              })):[]
+            };
+          });
+          expanded.clear();
+          save();render();
+        }
+      }catch(err){ alert("El archivo no es un respaldo válido."); }
+    };
+    r.readAsText(file);
+  }
+
+  function clearAllFilters(){
+    filter="all"; filterClient=""; filterDate="all"; searchText="";
+    document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("active", c.dataset.filter==="all"));
+    $("#clientSel").value=""; $("#dateSel").value="all"; $("#searchInput").value="";
+    render();
+  }
+
+  // --- Wire up ---
+  $("#addBtn").onclick = addTask;
+  $("#f-title").addEventListener("keydown", e=>{ if(e.key==="Enter") addTask(); });
+  $("#f-client").addEventListener("keydown", e=>{ if(e.key==="Enter") addTask(); });
+
+  $("#filters").addEventListener("click", e=>{
+    const btn = e.target.closest(".chip"); if(!btn) return;
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+    btn.classList.add("active");
+    filter = btn.dataset.filter;
+    render();
+  });
+  $("#sortSel").addEventListener("change", e=>{ sortBy = e.target.value; render(); });
+  $("#clientSel").addEventListener("change", e=>{ filterClient = e.target.value; render(); });
+  $("#dateSel").addEventListener("change", e=>{ filterDate = e.target.value; render(); });
+  $("#searchInput").addEventListener("input", e=>{ searchText = e.target.value; render(); });
+  $("#clearFilters").onclick = clearAllFilters;
+
+  // Modal de fecha
+  $("#dm-save").onclick = saveDateChange;
+  $("#dm-cancel").onclick = closeDateModal;
+  $("#dateModal").addEventListener("click", e=>{ if(e.target.id==="dateModal") closeDateModal(); });
+  document.addEventListener("keydown", e=>{
+    if(e.key==="Escape" && $("#dateModal").classList.contains("show")) closeDateModal();
+  });
+
+  $("#exportBtn").onclick = exportData;
+  $("#importBtn").onclick = ()=>$("#importFile").click();
+  $("#importFile").addEventListener("change", e=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=""; });
+
+  render();
+})();
+</script>
+</body>
+</html>
