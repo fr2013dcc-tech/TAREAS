@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#123A5E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Centro Control">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='40' fill='%232563EB'/%3E%3Ctext x='90' y='120' font-family='Arial' font-weight='bold' font-size='90' fill='white' text-anchor='middle'%3EQH%3C/text%3E%3C/svg%3E">
+<title>Centro de Control · Operaciones Last Mile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#F4F7FB; --surface:#FFFFFF; --ink:#16233B; --ink-soft:#5B6B82;
+    --line:#E3E9F1; --line-soft:#EFF3F8;
+    --accent:#2563EB; --accent-deep:#1E4FC0; --navy:#123A5E; --navy-soft:#1C4E7A;
+    --red:#DC2626; --red-bg:#FDECEC; --amber:#D97706; --amber-bg:#FDF1E3;
+    --green:#16A34A; --green-bg:#E7F5EC; --sky:#0EA5E9; --sky-bg:#E4F4FC;
+    --gray:#64748B; --gray-bg:#F1F5F9;
+    --shadow:0 1px 2px rgba(18,58,94,.05),0 6px 20px rgba(18,58,94,.06);
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+  .app{display:flex;min-height:100vh}
+
+  /* Sidebar */
+  .sidebar{width:246px;flex:none;background:linear-gradient(180deg,#164a76,var(--navy));color:#fff;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .sb-brand{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .sb-mark{width:42px;height:42px;flex:none;border-radius:10px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:'Archivo';font-weight:800;font-size:19px}
+  .sb-brand h1{font-family:'Archivo';font-weight:800;font-size:16px;line-height:1.1}
+  .sb-brand p{font-size:10.5px;color:#AEC6DE;margin-top:3px;letter-spacing:.03em}
+  .sb-nav{padding:12px 12px;flex:1;overflow-y:auto}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:9px;cursor:pointer;color:#C9DAEC;font-weight:600;font-size:13.5px;margin-bottom:2px;transition:.13s;border:none;background:none;width:100%;text-align:left}
+  .nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+  .nav-item.active{background:var(--accent);color:#fff}
+  .nav-item .ico{width:18px;height:18px;flex:none}
+  .nav-item .badge{margin-left:auto;background:rgba(255,255,255,.18);font-size:11px;font-weight:700;padding:1px 8px;border-radius:10px}
+  .nav-item.active .badge{background:rgba(255,255,255,.25)}
+  .sb-foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,.1);position:relative}
+  .login-screen{position:fixed;inset:0;z-index:500;background:linear-gradient(135deg,#0f3355,#123A5E 60%,#0EA5E9);display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-screen[hidden]{display:none!important}
+  .login-card{background:#fff;border-radius:18px;padding:30px 28px;width:100%;max-width:380px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+  .login-brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .login-mark{width:48px;height:48px;flex:none;border-radius:12px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:'Archivo';font-weight:800;font-size:20px}
+  .login-brand h1{font-family:'Archivo';font-weight:800;font-size:17px}
+  .login-brand p{font-size:10.5px;color:var(--ink-soft);margin-top:3px}
+  .login-card label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);margin:12px 0 5px}
+  .login-card input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:'Inter';background:#FCFDFE}
+  .login-card input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .login-btn{width:100%;margin-top:20px;background:var(--accent);color:#fff;border:none;font-family:'Archivo';font-weight:700;font-size:15px;padding:12px;border-radius:10px;cursor:pointer;transition:.15s}
+  .login-btn:hover{background:var(--accent-deep)}
+  .login-error{color:var(--red);font-size:12.5px;margin-top:12px;text-align:center;min-height:16px}
+  .gear-btn{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#EAF1F8;font-family:'Inter';font-size:12.5px;font-weight:600;padding:9px;border-radius:8px;cursor:pointer;transition:.13s}
+  .gear-btn:hover{background:rgba(255,255,255,.16)}
+  .datamenu{position:absolute;bottom:56px;left:16px;right:16px;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 12px 34px rgba(0,0,0,.28);overflow:hidden;z-index:40}
+  .datamenu button{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line-soft);color:var(--ink);font-family:'Inter';font-size:13px;font-weight:500;padding:11px 14px;cursor:pointer}
+  .datamenu button:last-child{border-bottom:none}
+  .datamenu button:hover{background:var(--line-soft)}
+
+  /* Main */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--line);padding:16px 26px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:20}
+  .topbar h2{font-family:'Archivo';font-weight:800;font-size:20px}
+  .topbar .sub{color:var(--ink-soft);font-size:12.5px;margin-top:2px}
+  .top-search{margin-left:auto;position:relative}
+  .top-search input{width:260px;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:9px;background:#FCFDFE;font-size:13px}
+  .top-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-soft)}
+  .content{padding:24px 26px 60px;max-width:1400px;width:100%}
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 18px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .kpi.red::before{background:var(--red)} .kpi.amber::before{background:var(--amber)}
+  .kpi.green::before{background:var(--green)} .kpi.sky::before{background:var(--sky)}
+  .kpi .num{font-family:'Archivo';font-weight:800;font-size:30px;line-height:1}
+  .kpi .lbl{font-size:12px;color:var(--ink-soft);margin-top:6px;font-weight:500}
+  .kpi.red .num{color:var(--red)} .kpi.amber .num{color:var(--amber)} .kpi.green .num{color:var(--green)}
+
+  /* Cards / panels */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+  .panel-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .panel-head h3{font-family:'Archivo';font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
+  .panel-head h3::before{content:"";width:14px;height:3px;background:var(--accent);border-radius:2px}
+  .panel-body{padding:16px 18px}
+  .panel-body.flush{padding:0}
+
+  /* Filters bar */
+  .filterbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .filterbar select,.filterbar input{padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:#FCFDFE;font-size:13px;font-family:'Inter'}
+  .filterbar select{cursor:pointer}
+  .btn{background:var(--accent);color:#fff;border:none;font-family:'Archivo';font-weight:700;font-size:13px;padding:9px 16px;border-radius:8px;cursor:pointer;transition:.13s}
+  .btn:hover{background:var(--accent-deep)}
+  .btn.ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);font-family:'Inter';font-weight:600}
+  .btn.ghost:hover{border-color:var(--ink);color:var(--ink)}
+  .btn.sm{padding:6px 12px;font-size:12px}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .seg button{background:var(--surface);border:1px solid var(--line);color:var(--ink-soft);font-family:'Inter';font-weight:600;font-size:12.5px;padding:8px 13px;border-radius:20px;cursor:pointer;transition:.13s;display:inline-flex;align-items:center;gap:6px}
+  .seg button:hover{border-color:var(--ink)}
+  .seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .seg button.on .cnt{background:rgba(255,255,255,.25)}
+  .seg .cnt{background:var(--line-soft);font-weight:700;font-size:11px;padding:0 7px;border-radius:9px}
+  .fac-expand{cursor:pointer}
+  .fac-expand .chev{transition:.15s;color:var(--ink-soft)}
+  tr.open-row .chev{transform:rotate(90deg)}
+  .fac-detail>td{background:var(--line-soft);padding:0 14px 14px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px;align-items:center}
+  .legend .dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle}
+  /* Calendario */
+  .cal-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .cal-title{font-family:'Archivo';font-weight:700;font-size:18px;min-width:170px;text-align:center}
+  .cal-grid-head{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:8px}
+  .cal-grid-head div{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);text-align:center;padding:4px;overflow:hidden}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;width:100%}
+  .cal-cell{background:var(--surface);border:1px solid var(--line);border-radius:10px;min-height:110px;padding:7px;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+  .cal-cell.empty{background:transparent;border:none}
+  .cal-cell.today{border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,.15)}
+  .cal-d{font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:5px}
+  .cal-cell.today .cal-d{color:var(--accent)}
+  .cal-items{display:flex;flex-direction:column;gap:4px;overflow:hidden;min-width:0}
+  .cal-it{font-size:11px;padding:3px 6px;border-radius:5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid var(--gray);max-width:100%}
+  .cal-it.alta{background:var(--red-bg);border-color:var(--red);color:#8f1a12}
+  .cal-it.media{background:var(--amber-bg);border-color:var(--amber);color:#8a4d05}
+  .cal-it.baja{background:var(--gray-bg);border-color:var(--gray)}
+  .cal-it.reunion{background:var(--sky-bg);border-color:var(--accent);color:var(--accent-deep);font-weight:600}
+  .cal-it.done{background:var(--green-bg);border-color:var(--green);color:#0f7a37;text-decoration:line-through}
+  .task.meet{border-left:4px solid var(--accent)}
+  /* Matriz facturación */
+  .mx-wrap{max-height:72vh;overflow:auto}
+  table.mx{border-collapse:separate;border-spacing:0;font-size:12px}
+  table.mx th,table.mx td{border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft)}
+  table.mx thead th{position:sticky;top:0;background:var(--navy);color:#fff;padding:7px 9px;text-align:center;z-index:3}
+  table.mx thead tr:nth-child(2) th{top:32px;background:var(--navy-soft);font-size:10px;text-transform:none;letter-spacing:0}
+  .mx-col{cursor:pointer;white-space:nowrap;user-select:none}
+  .mx-col:hover{background:var(--accent)}
+  .mxq{opacity:.7;font-weight:400;font-size:10px}
+  .mx-collapsed{min-width:46px;color:#dbe6f2}
+  th.mx-collapsed{cursor:pointer} th.mx-collapsed:hover{background:var(--accent)}
+  td.mx-collapsed{text-align:center;background:var(--line-soft);white-space:nowrap}
+  .mdot{width:8px;height:8px;border-radius:2px;display:inline-block;margin:0 1px;vertical-align:middle}
+  .mx-name{position:sticky;left:0;background:#fff;z-index:2;min-width:210px;max-width:230px;text-align:left!important;box-shadow:1px 0 0 var(--line)}
+  .notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;align-items:start}
+  .view-toggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .view-toggle button{background:#fff;border:none;padding:8px 12px;font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:'Inter'}
+  .view-toggle button.on{background:var(--accent);color:#fff}
+  .task-list.rows{display:flex;flex-direction:column;gap:8px}
+  .task-list.rows .task{flex-direction:row;align-items:center;flex-wrap:wrap;gap:8px 16px;padding:10px 16px;min-height:0}
+  .task-list.rows .tt{font-size:14px;margin:0;flex:1 1 240px;min-width:180px}
+  .task-list.rows .tm{margin:0}
+  .task-list.rows .task>div[style*="margin-top:9px"]{margin-top:0!important}
+  .task-list.rows .cierre-box{margin-top:0;flex-basis:100%;order:5}
+  .task-list.rows .tfoot{margin:0;padding:0;border-top:none;margin-left:auto}
+  @media(max-width:640px){ .task-list.rows .task{flex-direction:column;align-items:stretch} .task-list.rows .tfoot{margin-left:0} }
+  .chk-multi{display:flex;flex-wrap:wrap;gap:6px 16px;border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:#FCFDFE}
+  .chk-multi .dimchk{font-size:13.5px}
+  .note-card[draggable="true"]{cursor:grab}
+  .note-card.dragging{opacity:.4;cursor:grabbing}
+  .note-card.drop-target{outline:2px dashed var(--accent);outline-offset:2px}
+  .note-grip{color:rgba(0,0,0,.35);font-size:14px;margin-right:6px;cursor:grab;user-select:none}
+  .note-card.noedit{cursor:default}
+  .note-card.noedit:hover{transform:none}
+  .note-card{border:1px solid;border-left-width:5px;border-radius:12px;padding:13px 14px;cursor:pointer;transition:.13s;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:120px}
+  .note-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(18,58,94,.14)}
+  .note-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+  .note-imp{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#fff;padding:2px 8px;border-radius:20px}
+  .note-x{background:rgba(255,255,255,.5);border:none;color:#555;width:20px;height:20px;border-radius:6px;cursor:pointer;font-size:11px;line-height:1;opacity:0;transition:.13s}
+  .note-card:hover .note-x{opacity:1}
+  .note-x:hover{background:var(--red);color:#fff}
+  .note-title{font-family:'Archivo';font-weight:700;font-size:15px;margin-bottom:5px;color:#1a2433;word-break:break-word}
+  .note-body{font-size:13px;color:#33404f;white-space:pre-wrap;word-break:break-word;flex:1;line-height:1.4;max-height:220px;overflow:hidden}
+  .note-date{font-size:10.5px;color:rgba(0,0,0,.45);margin-top:10px;font-weight:600}
+  .color-picker{display:flex;gap:8px;flex-wrap:wrap}
+  .color-opt{border:2px solid;border-radius:9px;padding:8px 10px;cursor:pointer;font-size:11.5px;font-weight:700;transition:.13s;opacity:.65}
+  .color-opt.sel{opacity:1;box-shadow:0 0 0 3px rgba(18,58,94,.12)}
+  .ndot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:2px}
+  body.role-coord .admin-only{display:none!important}
+  .ent-card{background:var(--surface);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:14px;border-left:5px solid var(--amber)}
+  .ent-card.leido{border-left-color:var(--green);opacity:.92}
+  .ent-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+  .ent-from{font-family:'Archivo';font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:7px}
+  .ent-date{font-size:11.5px;color:var(--ink-soft);margin-top:3px}
+  .ent-nov{background:var(--line-soft);border-radius:9px;padding:11px 13px;font-size:13.5px}
+  .ent-nov b{font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft)}
+  .ent-nov-body{white-space:pre-wrap;line-height:1.45;margin-top:5px}
+  .ent-replies{margin:12px 0 0}
+  .ent-reply{border-left:3px solid var(--accent);background:var(--sky-bg);border-radius:0 9px 9px 0;padding:8px 12px;margin-top:8px;font-size:13px;white-space:pre-wrap}
+  .ent-reply-top{margin-bottom:2px}
+  .ent-actions{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .ent-reply-in{flex:1;min-width:180px;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:'Inter'}
+  .coord-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .coord-card{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .coord-head{display:flex;align-items:center;gap:11px;padding:12px 14px;background:var(--line-soft);border-bottom:1px solid var(--line)}
+  .coord-name{font-family:'Archivo';font-weight:700;font-size:14px}
+  .coord-clients{padding:6px 14px 12px}
+  .coord-cli{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:13px}
+  .coord-cli:last-child{border-bottom:none}
+  .cc-dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .cc-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cc-pers{font-weight:700;color:var(--ink-soft);font-size:12px}
+  .mx-idn{color:var(--ink-soft);font-size:11.5px}
+  .maximized{position:fixed!important;inset:0;z-index:300;margin:0!important;border-radius:0!important;display:flex;flex-direction:column;background:#fff}
+  .maximized .mx-wrap{max-height:calc(100vh - 46px);height:calc(100vh - 46px)}
+  .mx-max-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--navy);color:#fff;flex:none}
+  .mx-max-bar b{font-family:'Archivo';font-size:14px}
+  .mx-filter{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;font-family:'Inter';font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;padding:3px 4px;border-radius:5px;cursor:pointer;max-width:100%}
+  .mx-filter option{color:var(--ink);text-transform:none;font-weight:500}
+  .mx-sub-on{background:var(--accent)!important}
+  .mx-sub-on .mx-filter{border-color:#fff;background:rgba(255,255,255,.15)}
+  .cierre-box{margin-top:10px;font-size:12px;background:var(--green-bg);border:1px solid #cdead7;color:#0f6b32;border-radius:8px;padding:7px 10px;line-height:1.35}
+  .col-custom{background:var(--accent)!important}
+  .nt-badge{background:var(--accent);color:#fff;font-size:9px;font-weight:700;border-radius:8px;padding:0 4px;margin-left:2px}
+  .has-notes{border-color:var(--accent)!important;color:var(--accent)!important}
+  .note-add-row{display:flex;gap:8px;margin-bottom:14px}
+  .note-add-row textarea{flex:1;min-height:54px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-family:'Inter';font-size:13.5px;resize:vertical}
+  .note-list{display:flex;flex-direction:column;gap:9px;max-height:340px;overflow:auto}
+  .note-item{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:9px 12px;background:#FCFDFE}
+  .note-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+  .note-ts{font-size:11.5px;font-weight:700;color:var(--accent-deep)}
+  .note-del{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:12px}
+  .note-del:hover{color:var(--red)}
+  .note-text{font-size:13.5px;white-space:pre-wrap;line-height:1.4}
+  .col-del{background:rgba(255,255,255,.2);border:none;color:#fff;width:16px;height:16px;border-radius:4px;cursor:pointer;font-size:10px;line-height:1;margin-left:4px;vertical-align:middle}
+  .col-del:hover{background:var(--red)}
+  .mx-total-h{background:var(--accent)!important;color:#fff;text-align:center;min-width:96px;border-left:2px solid #fff}
+  .mx-total-c{text-align:right;font-weight:700;color:var(--navy);background:#EEF4FC;white-space:nowrap;border-left:2px solid var(--line)}
+  tfoot td{border-top:2px solid var(--navy);position:sticky;bottom:0}
+  .mx-foot{background:#E7EEF9;font-weight:700;color:var(--navy);text-align:right;white-space:nowrap}
+  .mx-foot-name{background:var(--navy)!important;color:#fff;font-family:'Archivo';font-size:11.5px;letter-spacing:.03em;z-index:3}
+  table.mx thead th.mx-name{z-index:5;background:var(--navy)}
+  .mxc-name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px}
+  .mx-sub{font-weight:600}
+  .mx-in{width:100%;min-width:74px;border:1px solid transparent;background:transparent;padding:5px 6px;font-size:11.5px;border-radius:5px;font-family:'Inter';color:var(--ink)}
+  .mx-in:hover{border-color:var(--line)}
+  .mx-in:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}
+  .mx-listo{background:var(--green-bg);color:#0f7a37}
+  .mx-pend{background:var(--amber-bg);color:#8a4d05}
+  .mx-na{background:var(--gray-bg);color:var(--gray)}
+  .dimchk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer}
+  .dimchk input{cursor:pointer}
+  @media(max-width:760px){
+    .cal-grid,.cal-grid-head{gap:3px}
+    .cal-cell{min-height:64px;padding:3px;border-radius:7px}
+    .cal-d{font-size:11px;margin-bottom:2px}
+    .cal-it{font-size:9px;padding:2px 3px;border-left-width:2px}
+    .cal-grid-head div{font-size:9px;padding:2px}
+    .cal-bar{flex-wrap:wrap}
+    .cal-title{font-size:16px;min-width:120px}
+  }
+
+  /* Tables */
+  .tbl-wrap{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  thead th{background:var(--navy);color:#fff;text-align:left;padding:11px 13px;font-family:'Inter';font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;position:sticky;top:0}
+  thead th:first-child{border-top-left-radius:0}
+  tbody td{padding:10px 13px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+  tbody tr:hover{background:var(--line-soft)}
+  tbody tr:last-child td{border-bottom:none}
+  td.name{font-weight:600;min-width:220px}
+  td .ceco{color:var(--ink-soft);font-size:11.5px}
+  .tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:7px;white-space:nowrap}
+  .tag.green{background:var(--green-bg);color:var(--green)} .tag.blue{background:var(--sky-bg);color:var(--sky)}
+  .tag.amber{background:var(--amber-bg);color:var(--amber)} .tag.red{background:var(--red-bg);color:var(--red)}
+  .tag.gray{background:var(--gray-bg);color:var(--gray)}
+  .av{width:26px;height:26px;border-radius:50%;display:inline-grid;place-items:center;color:#fff;font-size:10px;font-weight:700;flex:none}
+  .who{display:inline-flex;align-items:center;gap:7px}
+  .cell-input{width:100%;border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 8px;font-size:13px;font-family:'Inter';color:var(--ink)}
+  .cell-input:hover{border-color:var(--line)}
+  .cell-input:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .row-act{display:flex;gap:6px}
+  .iconbtn{width:30px;height:30px;border:1px solid var(--line);background:#fff;border-radius:7px;cursor:pointer;display:grid;place-items:center;color:var(--ink-soft);transition:.13s}
+  .iconbtn:hover{border-color:var(--ink);color:var(--ink)}
+  .iconbtn.del:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+
+  /* Distribución */
+  .dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:900px){.dist-grid{grid-template-columns:1fr}}
+  .distrow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+  .distrow:last-child{border-bottom:none}
+  .distrow .dn{font-weight:600;width:120px;flex:none;display:flex;align-items:center;gap:8px}
+  .bar{flex:1;height:22px;background:var(--line-soft);border-radius:6px;overflow:hidden;position:relative}
+  .bar span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--accent),var(--sky));border-radius:6px}
+  .distrow .dv{width:120px;flex:none;text-align:right;font-size:12.5px;color:var(--ink-soft)}
+  .distrow .dv b{color:var(--ink)}
+
+  /* Facturación */
+  .facproj{border:1px solid var(--line);border-radius:11px;margin-bottom:10px;overflow:hidden}
+  .facproj-head{padding:12px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;background:#fff}
+  .facproj-head:hover{background:var(--line-soft)}
+  .facproj-head .fp-name{font-weight:700}
+  .facproj-head .fp-meta{color:var(--ink-soft);font-size:12px;margin-left:auto;display:flex;gap:8px;align-items:center}
+  .facproj-body{padding:0 15px 14px;display:none}
+  .facproj.open .facproj-body{display:block}
+  .facproj.open .facproj-head{border-bottom:1px solid var(--line)}
+  .chev{transition:.15s} .facproj.open .chev{transform:rotate(90deg)}
+
+  /* Tareas */
+  .task-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+  .task{background:var(--surface);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);padding:15px;display:flex;flex-direction:column}
+  .task.done{opacity:.6}
+  .task .tt{font-weight:600;font-size:14.5px;line-height:1.3}
+  .task.done .tt{text-decoration:line-through}
+  .task .tm{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px;align-items:center}
+  .task .tfoot{display:flex;gap:7px;align-items:center;margin-top:13px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .prio{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:5px}
+  .prio::before{content:"";width:6px;height:6px;border-radius:50%}
+  .prio.alta{background:var(--red-bg);color:var(--red)}.prio.alta::before{background:var(--red)}
+  .prio.media{background:var(--amber-bg);color:var(--amber)}.prio.media::before{background:var(--amber)}
+  .prio.baja{background:var(--gray-bg);color:var(--gray)}.prio.baja::before{background:var(--gray)}
+  .due{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:6px}
+  .due.over{background:var(--red-bg);color:var(--red)} .due.soon{background:var(--amber-bg);color:var(--amber)}
+  .due.ok{background:var(--gray-bg);color:var(--gray)}
+  .status-sel{font-size:12px;font-weight:600;padding:5px 24px 5px 10px;border-radius:7px;border:1px solid transparent;cursor:pointer;appearance:none;margin-right:auto;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+  .status-sel.pendiente{background-color:var(--gray-bg);color:var(--ink)}
+  .status-sel.progreso{background-color:var(--sky-bg);color:var(--sky)}
+  .status-sel.bloqueada{background-color:var(--amber-bg);color:var(--amber)}
+  .status-sel.completada{background-color:var(--green-bg);color:var(--green)}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(18,35,59,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:620px;max-height:90vh;overflow:auto;box-shadow:0 24px 70px rgba(0,0,0,.3)}
+  .modal-top{background:var(--navy);color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}
+  .modal-top h3{font-family:'Archivo';font-size:16px}
+  .modal-top button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1}
+  .modal-body{padding:18px 20px}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .fgrid .full{grid-column:1/-1}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft)}
+  .field input,.field select,.field textarea{padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;font-family:'Inter';background:#FCFDFE;width:100%}
+  .field textarea{min-height:60px;resize:vertical}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+  .empty{text-align:center;padding:50px 20px;color:var(--ink-soft)}
+  .empty h4{font-family:'Archivo';color:var(--ink);margin-bottom:6px;font-size:16px}
+  .hint{font-size:12px;color:var(--ink-soft);background:var(--sky-bg);border:1px solid #cfeafb;padding:9px 12px;border-radius:9px;margin-bottom:16px}
+  @media(max-width:760px){
+    .app{flex-direction:column}
+    .sidebar{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap}
+    .sb-nav{display:flex;flex-wrap:wrap;flex:1 1 100%;order:3}
+    .nav-item{width:auto}
+    .fgrid{grid-template-columns:1fr}
+    .dist-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="login-screen" id="loginScreen" hidden>
+  <div class="login-card">
+    <div class="login-brand"><div class="login-mark">QH</div><div><h1>Centro de Control</h1><p>OPERACIONES LAST MILE · QUICK HELP SAS</p></div></div>
+    <label for="lg-user">Usuario</label>
+    <input type="text" id="lg-user" autocomplete="username" placeholder="Usuario">
+    <label for="lg-pass">Contraseña</label>
+    <input type="password" id="lg-pass" autocomplete="current-password" placeholder="Contraseña">
+    <button class="login-btn" id="lg-enter">Entrar</button>
+    <div class="login-error" id="lg-error"></div>
+  </div>
+</div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-mark">QH</div>
+      <div><h1>Centro de Control</h1><p>OPERACIONES LAST MILE</p></div>
+    </div>
+    <nav class="sb-nav" id="nav"></nav>
+    <div class="sb-foot">
+      <div id="syncStatus" class="sync-status">Datos locales</div>
+      <button id="gearBtn" class="gear-btn">⚙ Datos y respaldo</button>
+      <div class="datamenu" id="dataMenu" hidden>
+        <button data-act="cloudpull">☁ Traer datos de la nube</button>
+        <button data-act="cloudpush" class="admin-only">☁ Subir mis datos a la nube</button>
+        <button data-act="excel">📊 Exportar a Excel</button>
+        <button data-act="json">⬇ Exportar respaldo (JSON)</button>
+        <button data-act="import">⬆ Importar respaldo (JSON)</button>
+        <button data-act="reset" class="admin-only" style="color:var(--red)">♻ Restablecer datos del Excel</button>
+        <button data-act="logout">🔒 Cerrar sesión</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h2 id="secTitle">Resumen</h2>
+        <div class="sub" id="secSub"></div>
+      </div>
+      <div class="top-search" id="searchWrap" hidden>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="search" id="search" placeholder="Buscar…">
+      </div>
+    </div>
+    <div class="content" id="view"></div>
+  </main>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+
+<script>
+const SEED_PROYECTOS = [{"id": 1, "proyecto": "HEALT & LIFE IPS SAS LM", "ceco": 3299, "responsable": "Retirado", "analista": "DAYANA", "personal": 0, "contrato": "INACTIVO", "version": "INACTIVO", "vigencia": "INACTIVO", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "ESPECIAL", "traza": "NO", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.1925, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": 6196802.399999999}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 6620139.899999999}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": 9605587.499999998}, {"q": "2Q", "prefactura": "ENVIADA PDT OK", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 8037449.999999998}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "SIN PAGOS", "valor": 2885849.9999999995}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "SIN PAGOS", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "SIN PAGOS", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "SIN PAGOS", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 2, "proyecto": "DEJAMU SUBACHOQUE S.A.S.", "ceco": 3252, "responsable": "Retirado", "analista": "PAOLA", "personal": 0, "contrato": "INACTIVO", "version": "INACTIVO", "vigencia": "INACTIVO", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "ESPECIAL", "traza": "IN", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.165, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA 1Q MZ", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "CARGADA 1Q MZ", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": 8834744.879999999}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 7261994.88}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": 7087244.88}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 7087244.88}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "SIN PAGOS", "valor": 4724829.92}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 4724829.92}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": 1924443.3066666666}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "SIN PAGOS", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "SIN PAGOS", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 3, "proyecto": "PANAMERICANA LIBRERÍA Y PAPELERIA CC 220509220001", "ceco": 578, "responsable": "TATIANA", "analista": "DAYANA", "personal": 4, "contrato": "DEMANDA", "version": "DEMANDA", "vigencia": "DEMANDA", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "NO APLICA", "traza": "SMART", "geo": "NO", "incremento": "IPC", "incrementoPct": 0.051, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA", "provision": null, "nomina": "OK MANIFIESTOS", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": "OK MANIFIESTOS", "valor": null}, {"q": "1Q", "prefactura": "ENVIADA PDT OK", "provision": null, "nomina": "OK MANIFIESTOS", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "ENVIADOS", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "ENVIADA", "valor": 15269846.656818802}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "ENVIADOS", "valor": 17531315.44667389}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 14370923.180915408}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "ENVIADOS", "valor": 15583647.91554987}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "ENVIADOS", "valor": 16318590.712039424}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 12137774.591253536}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 13322179.125694785}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "ENVIADOS", "valor": 14684724.43964648}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "ENVIADOS", "valor": 11374511.594570769}, {"q": "2Q", "prefactura": "ENVIADA PDT OK", "provision": "ENVIADA", "nomina": "ENVIADA", "valor": 16482571.391453264}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 4, "proyecto": "KAESER COMPRESORES DE COLOMBIA LTDA", "ceco": 510, "responsable": "TATIANA", "analista": "DAYANA", "personal": 1, "contrato": "FIRMADO", "version": "OTRO SI # 1", "vigencia": "2026-08-07", "consiliacion": "QUINCENAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "NO", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.23, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA AN", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "NO APLICA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA", "provision": "ENVIADA EN BLANCO", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADO E/B", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA E/B", "nomina": "SIN PAGOS", "valor": 3101889}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 3101889}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": 3101889}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 3101889}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 5, "proyecto": "BELLTECH COLOMBIA S.A. CC 220508210050", "ceco": 478, "responsable": "TATIANA", "analista": "CINDY", "personal": 3, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "QUINCENAL", "traza": "NO", "geo": "SI", "incremento": "SMLV", "incrementoPct": 0.185, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 2791308.975}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 27674266.159833334}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 4739255.038333333}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 26114851.5485}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 1381576.29}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 15799353.48}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 2336512.7800000003}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 15066043.56}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 2400839.36}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 15962968.805}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 6, "proyecto": "DOM - GRUPO COMERCIAL SAGAL SAS CC 220509220049", "ceco": 666, "responsable": "TATIANA", "analista": "PAOLA", "personal": 1, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "SMART", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.2378, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "ENVIADA PDT OK", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 5974230.0287999995}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 478032.3033}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 6545935.997355}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 914062.4274}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 6646144.2948}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 854232.76404}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 6517233.615}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 7, "proyecto": "HOYA LENS COLOMBIA S.A.S. LM", "ceco": 3076, "responsable": "TATIANA", "analista": "DAYANA", "personal": 10, "contrato": "EN PROCESO", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "NO", "geo": "SI", "incremento": "SMLV", "incrementoPct": 0.21, "observaciones": "25 DEL MES CORTE", "periodos": [{"q": "2Q", "prefactura": "FACTURADA 25 DIC", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA 25 ENE", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA 25 ENE", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 79239394}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 64194581.027499996}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 66202714.875}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 61839525.05500001}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 58789908}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 8, "proyecto": "HLF COLOMBIA - HERBALIFE CC 220508210016", "ceco": 461, "responsable": "TATIANA", "analista": "DAYANA", "personal": 8, "contrato": "ENVIADO POR EL CLIENTE", "version": "OTRO SI # 7", "vigencia": "", "consiliacion": "N/A", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "SMART", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.1925, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA EN BLANCO", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "PDT FACTURA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "OK FACTURA", "provision": "ENVIADO E/B", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA E/B", "nomina": "SIN PAGOS", "valor": 35443794.288708}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA E/B", "nomina": "SIN PAGOS", "valor": 35443794.288708}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "CARGADA", "valor": 35592679}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": 35592679}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 9, "proyecto": "OP TEAM SAS", "ceco": 3390, "responsable": "JHON", "analista": "PAOLA", "personal": 3, "contrato": "SE DEBE SOLICITAR", "version": "", "vigencia": "", "consiliacion": "N/A", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "IN", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.1825, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "NO APLICA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "N/A", "provision": "ENVIADA EN BLANCO", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "ANALISTA FC", "provision": "ENVIADO", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA E/B", "nomina": "SIN PAGOS", "valor": 15773968.21}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA E/B", "nomina": "SIN PAGOS", "valor": 15424480.019666668}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": 15424480.019666668}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": 15424480.019666668}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 10, "proyecto": "BELLTECH COLOMBIA S.A. DOM LM", "ceco": 3115, "responsable": "JHON", "analista": "CINDY", "personal": 5, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "ESPECIAL", "traza": "NO", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.185, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 3625091.802}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 38959952.126}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 5151300.228}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 39058458.63}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 5570407.2360000005}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 39424088.17}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 4945878.108}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 38283910.864}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 3928498.254}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 38983585.0705}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 11, "proyecto": "COOPERATIVA NACIONAL DE DROGUISTAS DETALLISTAS COOPIDROGAS   LM", "ceco": 3313, "responsable": "JHON", "analista": "CINDY", "personal": 14, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "SMART", "geo": "SI", "incremento": "SMLV + IPC", "incrementoPct": 0.17242, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 66038140.96367741}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 67562482.3996}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 64300904.5318387}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 62482528.59599999}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 64012161.883666664}, {"q": "1Q", "prefactura": "ENVIADA PDT OK", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 12, "proyecto": "KAESER COMPRESORES DE COLOMBIA SAS DOM LM", "ceco": 1966, "responsable": "JHON", "analista": "DAYANA", "personal": 8, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "SMART", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.2, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 72295316.35466886}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN APROBADO", "valor": 73621419.94910085}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 71099741.22865619}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 69860873.17659685}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "ENVIADA PDT OK", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 13, "proyecto": "BIPULPA PREMIUM SAS", "ceco": 3437, "responsable": "JHON", "analista": "CINDY", "personal": 1, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "QUINCENAL", "traza": "SMART", "geo": "NO", "incremento": "SML", "incrementoPct": "", "observaciones": "", "periodos": [{"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": 19674591, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": "N/A", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "N/A", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 14, "proyecto": "CUEROS VELEZ S.A.S.  LM", "ceco": 3315, "responsable": "JHON", "analista": "CINDY", "personal": 3, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "ESPECIAL", "traza": "SMART", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.2378, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 8283766.074}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 8137062.018}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 8081794.248000002}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 8592572.418}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 9309976.542000001}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 8818532.808}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 8079516.696}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 8471688.870000001}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 7898416.682}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 15, "proyecto": "ADMINISTRADORA CLINICA LA COLINA SA LM", "ceco": 3443, "responsable": "JHON", "analista": "DAYANA", "personal": 3, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "SMART", "geo": "SI", "incremento": "SMLV", "incrementoPct": "", "observaciones": "", "periodos": [{"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": "N/A", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "N/A", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "N/A", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "N/A", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "N/A", "valor": "N/A"}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 16, "proyecto": "CORPORACION HOSPITALARIA JUAN CIUDAD CC 220508200065", "ceco": 438, "responsable": "JEISON", "analista": "DAYANA", "personal": 3, "contrato": "", "version": "", "vigencia": "", "consiliacion": "MENSUAL", "facturacion": "MENSUAL", "nomina": "QUINCENAL", "traza": "NO", "geo": "SI", "incremento": "", "incrementoPct": "", "observaciones": "", "periodos": [{"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": "N/A", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "N/A", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 17, "proyecto": "CORPORACION HOSPITALARIA JUAN CIUDAD CC 220601260065", "ceco": 613, "responsable": "JEISON", "analista": "DAYANA", "personal": 136, "contrato": "", "version": "", "vigencia": "", "consiliacion": "MENSUAL", "facturacion": "MENSUAL", "nomina": "MENSUAL", "traza": "NO", "geo": "SI", "incremento": "", "incrementoPct": "", "observaciones": "", "periodos": [{"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": "N/A", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 18, "proyecto": "AVIDESA MAC POLLO S A (DOM) CC 220509220057", "ceco": 995, "responsable": "JULIAN", "analista": "DAYANA", "personal": 7, "contrato": "", "version": "", "vigencia": "", "consiliacion": "MENSUAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "NO", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.2378, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADO", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA BGT-PDT REGIONALES", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "ENVIADAS PDT OK", "provision": "ENVIADA", "nomina": "NO CARGADAS SIN AP", "valor": null}, {"q": "1Q", "prefactura": "SE ENVIA 2Q", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "ENVIADA PDT OK", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": 19334436}, {"q": "2Q", "prefactura": "ENVIADA PDT OK", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 55281543.88634226}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 19173315.7}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN APROBADO", "valor": 57766669.8385728}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 7411533.8}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 32951189.8375}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "SIN APROBADO", "valor": 25715974.075}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "ENVIADA PDT OK", "provision": "ENVIADA", "nomina": "SIN APROBADO", "valor": 27834220.15}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 19, "proyecto": "LENOR COLOMBIA SAS LM", "ceco": 3262, "responsable": "JULIAN", "analista": "CINDY", "personal": 1, "contrato": "", "version": "", "vigencia": "", "consiliacion": "MENSUAL", "facturacion": "MENSUAL", "nomina": "MENSUAL", "traza": "IN", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.2378, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "NO APLICA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 5840584.056000001}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 5508210}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 5851328.16}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 5389628.760000001}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 20, "proyecto": "LEVI STRAUSS COLOMBIA S.A.S LM", "ceco": 3408, "responsable": "JULIAN", "analista": "DAYANA", "personal": 1, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "QUINCENAL", "nomina": "ESPECIAL", "traza": "SMART", "geo": "SI", "incremento": "SMLV", "incrementoPct": 0, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "1Q", "prefactura": null, "provision": null, "nomina": null, "valor": null}, {"q": "2Q", "prefactura": null, "provision": "N/A", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "N/A", "valor": "N/A"}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "N/A", "valor": "N/A"}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 829266.6666666667}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADO EN 2Q", "valor": 2566200}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 2480000}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": 2878350}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 21, "proyecto": "GTM COLOMBIA S.A  LM", "ceco": 3288, "responsable": "JULIAN", "analista": "DAYANA", "personal": 1, "contrato": "", "version": "", "vigencia": "", "consiliacion": "QUINCENAL", "facturacion": "MENSUAL", "nomina": "MENSUAL", "traza": "IN", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.2378, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "N/A", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 6439035.6}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 6439035.6}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 6439035.6}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 6439035.6}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 22, "proyecto": "ALIMENTOS CARNICOS S.A.S. CC 220509220032", "ceco": 623, "responsable": "JULIAN", "analista": "DAYANA", "personal": 5, "contrato": "", "version": "", "vigencia": "", "consiliacion": "N/A", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "NO", "geo": "NO", "incremento": "SMLV + IPC", "incrementoPct": 0.1686, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA AN", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "PDT FACTURACIÓN ", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "PDT FACTURACIÓN ", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADO", "nomina": "CARGADO EN RENUNCIA", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 22189123.835383035}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 24490218.159052372}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 24325854.278790276}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 22517851.595907226}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 23, "proyecto": "HANNA INSTRUMENTS S.AS CC 220508210107", "ceco": 502, "responsable": "JULIAN", "analista": "CINDY", "personal": 2, "contrato": "", "version": "", "vigencia": "", "consiliacion": "MENSUAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "IN", "geo": "SI", "incremento": "SMLV", "incrementoPct": 0.2378, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "FACTURADA AN", "provision": "ENVIADA", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "FACTURADA AN", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "FACTURADA AN", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADO", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA E/B", "nomina": "SIN PAGOS", "valor": 13357592.4444}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA E/B", "nomina": "SIN PAGOS", "valor": 13357592.4444}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 13357592.4444}, {"q": "1Q", "prefactura": "APROBADA", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "APROBADA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 13939358.4444}, {"q": "1Q", "prefactura": "APROBADO", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "APROBADO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "ENVIADA PDT OK", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 24, "proyecto": "UNILEVER LM", "ceco": 3051, "responsable": "JULIAN", "analista": "DAYANA", "personal": 4, "contrato": "", "version": "", "vigencia": "", "consiliacion": "MENSUAL", "facturacion": "MENSUAL", "nomina": "ESPECIAL", "traza": "NO", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0.1925, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "SIN DETALLE", "provision": "SIN DETALLE", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "SIN DETALLE", "provision": null, "nomina": "SIN DETALLE", "valor": null}, {"q": "2Q", "prefactura": "SIN DETALLE", "provision": "SIN DETALLE", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "NO APLICA", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "ENVIADA PDT OK", "provision": "ENVIADO", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "ENVIO ANALISTA", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 21956364.496}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "CARGADA", "valor": 21221668}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIO E/B", "nomina": "SIN PAGOS", "valor": 19877899}, {"q": "1Q", "prefactura": "NO APLICA ENVIO", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": 19877899}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "ENVIADA", "nomina": "SIN PAGOS", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 25, "proyecto": "OUT - LABORATORIO INVESTIGACION HORMONA", "ceco": 511, "responsable": "ABEL", "analista": "DAYANA", "personal": 10, "contrato": "", "version": "", "vigencia": "", "consiliacion": "N/A", "facturacion": "N/A", "nomina": "ESPECIAL", "traza": "N/A", "geo": "NO", "incremento": "SMLV", "incrementoPct": 0, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "N/A", "valor": null}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "NO CARGADA", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "SIN PAGOS", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}, {"id": 26, "proyecto": "DOM - BACK UP NEGOCIOS ESPECIALES CC 220509220053", "ceco": 1007, "responsable": "A - LIDER", "analista": "N/A", "personal": 3, "contrato": "", "version": "", "vigencia": "", "consiliacion": "N/A", "facturacion": "N/A", "nomina": "BACKUP", "traza": "N/A", "geo": "SI", "incremento": "N/A", "incrementoPct": 0, "observaciones": "", "periodos": [{"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": null, "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "APROBADA", "valor": null}, {"q": "2Q", "prefactura": "N/A", "provision": "NO APLICA", "nomina": "CARGADA", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": null}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "EN ARCHIVO", "valor": null}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "NO APLICA ENVIO", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "CARGADA", "valor": 0}, {"q": "2Q", "prefactura": "N/A", "provision": "N/A", "nomina": "CARGADA", "valor": 0}, {"q": "1Q", "prefactura": "N/A", "provision": null, "nomina": "EN ARCHIVO", "valor": null}], "nit": "", "contacto": "", "telefono": "", "correo": "", "direccion": ""}];
+</script>
+<script>
+(function(){
+  "use strict";
+  const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+  const KEY="qh_cc_v1";
+  const esc=s=>{const d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML;};
+
+  // ---------- Datos ----------
+  let DATA = load();
+  function load(){
+    let d=null;
+    try{ d=JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+    if(!d || !d.proyectos) d={ proyectos: JSON.parse(JSON.stringify(SEED_PROYECTOS)), tareas: [] };
+    normalize(d);
+    return d;
+  }
+  function normalize(d){
+    d.proyectos.forEach(p=>{
+      if(p.estado===undefined){
+        const inact = (p.contrato||"").toUpperCase().includes("INACTIVO") || (p.responsable||"").toUpperCase()==="RETIRADO";
+        p.estado = inact ? "inactivo" : "activo";
+      }
+      if(p.fechaIngreso===undefined) p.fechaIngreso="";
+      if(p.fechaRetiro===undefined) p.fechaRetiro="";
+      if(p.idNomina===undefined) p.idNomina="";
+      if(p.extra===undefined || typeof p.extra!=="object") p.extra={};
+      (p.periodos||[]).forEach(y=>{ if(y.idnomina===undefined) y.idnomina=""; });
+    });
+    (d.tareas||[]).forEach(t=>{ if(t.responsable===undefined) t.responsable=""; if(t.tipo===undefined) t.tipo="tarea"; if(t.hora===undefined) t.hora=""; if(!Array.isArray(t.notas)) t.notas=[]; if(t.cierre===undefined) t.cierre=""; if(!Array.isArray(t.responsables)) t.responsables = t.responsable ? [t.responsable] : []; });
+    if(d.facStart===undefined) d.facStart="2025-12";
+    if(!Array.isArray(d.cliCols)) d.cliCols=[];
+    if(!Array.isArray(d.notas)) d.notas=[];
+    if(d.notasOrdered===undefined){ if(d.notas.length) d.notas.reverse(); d.notasOrdered=true; }
+    if(!Array.isArray(d.entregas)) d.entregas=[];
+    if(!Array.isArray(d.audit)) d.audit=[];
+    return d;
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(DATA)); }catch(e){}
+    if(supa && !applyingRemote){ clearTimeout(pushTimer); pushTimer=setTimeout(()=>pushCloud(), 700); }
+  }
+  // Registro de actividad (quién hizo qué; solo lo ve el líder)
+  function logAction(what){
+    if(applyingRemote) return;
+    if(!Array.isArray(DATA.audit)) DATA.audit=[];
+    DATA.audit.push({who:userName||"?", role:userRole, what, ts:new Date().toISOString()});
+    if(DATA.audit.length>500) DATA.audit=DATA.audit.slice(-500);
+  }
+  const _lastLog={};
+  function logThrottled(key, what){ const now=Date.now(); if(now-(_lastLog[key]||0)>25000){ _lastLog[key]=now; logAction(what); } }
+
+  // ================= NUBE (Supabase) =================
+  const SB_URL="https://koltthvjkucbnxtqriab.supabase.co";
+  const SB_KEY="sb_publishable_uPLpaJ4tl2AP0ghIcWIarw_6to7Z5eM";
+  let supa=null, pushTimer=null, applyingRemote=false;
+  function setSync(msg){ const el=document.getElementById("syncStatus"); if(el) el.textContent=msg; }
+  function loadSb(){ return new Promise((res,rej)=>{ if(window.supabase&&window.supabase.createClient) return res(); const s=document.createElement("script"); s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+  // ===== Fusión: unir por id en vez de sobrescribir (evita perder datos con varios editando) =====
+  function mergeById(a,b){ const m=new Map(); (a||[]).forEach(x=>m.set(x.id,x)); (b||[]).forEach(x=>{ m.set(x.id, m.has(x.id)?Object.assign({},m.get(x.id),x):x); }); return [...m.values()]; }
+  function mergeReplies(a,b){ const seen=new Set(),out=[]; [...(a||[]),...(b||[])].forEach(r=>{ const k=(r.ts||"")+"|"+(r.by||"")+"|"+(r.text||""); if(!seen.has(k)){seen.add(k);out.push(r);} }); out.sort((x,y)=>(x.ts||"").localeCompare(y.ts||"")); return out; }
+  function mergeEntregas(a,b){ const m=new Map(); (a||[]).forEach(x=>m.set(x.id,x)); (b||[]).forEach(x=>{ if(!m.has(x.id)) m.set(x.id,x); else { const e=m.get(x.id); m.set(x.id, Object.assign({},e,x,{respuestas:mergeReplies(e.respuestas,x.respuestas), estado:(x.estado==="leido"||e.estado==="leido")?"leido":(x.estado||e.estado)})); } }); return [...m.values()]; }
+  function mergeAudit(a,b){ const seen=new Set(),out=[]; [...(a||[]),...(b||[])].forEach(r=>{ const k=(r.ts||"")+"|"+(r.who||"")+"|"+(r.what||""); if(!seen.has(k)){seen.add(k);out.push(r);} }); out.sort((x,y)=>(x.ts||"").localeCompare(y.ts||"")); return out.slice(-500); }
+  function mergeData(base, overlay){
+    const out=Object.assign({}, base, overlay);   // campos simples: gana overlay
+    ["proyectos","tareas","notas","cliCols"].forEach(k=>{ out[k]=mergeById(base[k]||[], overlay[k]||[]); });
+    out.entregas=mergeEntregas(base.entregas||[], overlay.entregas||[]);
+    out.audit=mergeAudit(base.audit||[], overlay.audit||[]);
+    return out;
+  }
+  function isEditingView(){ const a=document.activeElement; return !!(a && a!==document.body && $("#view") && $("#view").contains(a) && /INPUT|TEXTAREA|SELECT/.test(a.tagName)); }
+  function captureScroll(){ const w=$(".mx-wrap")||$(".tbl-wrap"); return {y:window.scrollY, x:w?w.scrollLeft:0, ty:w?w.scrollTop:0}; }
+  function restoreScroll(s){ requestAnimationFrame(()=>{ try{ window.scrollTo(0,s.y); const w=$(".mx-wrap")||$(".tbl-wrap"); if(w){ w.scrollLeft=s.x; w.scrollTop=s.ty; } }catch(e){} }); }
+  let _pendingRemote=null;
+  function applyRemote(inc){
+    const merged=mergeData(DATA, inc);
+    if(JSON.stringify(merged)===JSON.stringify(DATA)) return;   // sin cambios (eco propio)
+    applyingRemote=true; DATA=merged; try{localStorage.setItem(KEY,JSON.stringify(DATA));}catch(e){}
+    const s=captureScroll(); render(); restoreScroll(s); applyingRemote=false;
+    setSync("↻ Actualizado desde otro dispositivo");
+  }
+
+  async function pushCloud(){
+    if(!supa) return;
+    try{
+      const cloud=await pullCloud();                       // traer lo último y FUSIONAR (no pisar)
+      if(cloud && typeof cloud==="object") DATA=mergeData(cloud, DATA);
+      const {error}=await supa.from("tablero").upsert({id:"main",data:DATA,updated_at:new Date().toISOString()});
+      if(error) throw error;
+      try{localStorage.setItem(KEY,JSON.stringify(DATA));}catch(e){}
+      setSync("☁ Guardado "+new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"}));
+    }catch(e){ setSync("⚠ No se pudo guardar en la nube"); }
+  }
+  async function pullCloud(){
+    if(!supa) return null;
+    const {data,error}=await supa.from("tablero").select("data").eq("id","main").single();
+    if(error) return null;
+    return data ? data.data : null;
+  }
+  async function initCloud(){
+    setSync("Conectando…");
+    try{ await loadSb(); }catch(e){ setSync("Sin nube · datos locales"); return; }
+    try{
+      supa=window.supabase.createClient(SB_URL, SB_KEY);
+      const cloud=await pullCloud();
+      if(cloud && Array.isArray(cloud.proyectos) && cloud.proyectos.length){
+        DATA=normalize(mergeData(cloud, DATA)); try{localStorage.setItem(KEY,JSON.stringify(DATA));}catch(e){}
+        render(); setSync("☁ Sincronizado");
+      }else{
+        await pushCloud(); setSync("☁ Datos subidos");
+      }
+      try{ const {data}=await supa.from("tablero").select("data").eq("id","personal").single(); if(data&&data.data&&Array.isArray(data.data.cols)){ PERSONAL=data.data; try{localStorage.setItem(PKEY,JSON.stringify(PERSONAL));}catch(e){} if(current==="personal") render(); } }catch(e){}
+      supa.channel("tablero-main").on("postgres_changes",{event:"*",schema:"public",table:"tablero",filter:"id=eq.main"},payload=>{
+        const inc=payload.new&&payload.new.data; if(!inc) return;
+        if(isEditingView()){ _pendingRemote=inc; return; }   // no interrumpir mientras editas
+        applyRemote(inc);
+      }).subscribe();
+      supa.channel("tablero-personal").on("postgres_changes",{event:"*",schema:"public",table:"tablero",filter:"id=eq.personal"},payload=>{
+        const inc=payload.new&&payload.new.data;
+        if(inc&&Array.isArray(inc.cols)&&JSON.stringify(inc)!==JSON.stringify(PERSONAL)){ if(isEditingView())return; PERSONAL=inc; try{localStorage.setItem(PKEY,JSON.stringify(PERSONAL));}catch(e){} if(current==="personal"){ const s=captureScroll(); render(); restoreScroll(s); } }
+      }).subscribe();
+      // aplicar cambios remotos aplazados cuando dejas de editar
+      document.addEventListener("focusout", ()=>{ setTimeout(()=>{ if(_pendingRemote && !isEditingView()){ const inc=_pendingRemote; _pendingRemote=null; applyRemote(inc); } }, 400); });
+    }catch(e){ setSync("⚠ Nube no disponible · datos locales"); }
+  }
+
+  // --- Matriz de personal ---
+  const PKEY="qh_personal_v1";
+  let PERSONAL=loadPersonal();
+  function loadPersonal(){ try{ const d=JSON.parse(localStorage.getItem(PKEY)); if(d&&Array.isArray(d.cols)) return d; }catch(e){} return {name:"",cols:[],rows:[],hidden:[]}; }
+  function savePersonal(){
+    try{ localStorage.setItem(PKEY, JSON.stringify(PERSONAL)); }catch(e){}
+    if(supa){ supa.from("tablero").upsert({id:"personal",data:PERSONAL,updated_at:new Date().toISOString()}).then(({error})=>{ if(!error) setSync("☁ Personal guardado"); }); }
+  }
+
+  // ---------- Utilidades ----------
+  const COLORS=["#2563EB","#16A34A","#D97706","#0EA5E9","#7C3AED","#DB2777","#0D9488","#B45309","#475569"];
+  function personColor(name){ let h=0; for(const c of (name||"")) h=(h*31+c.charCodeAt(0))>>>0; return COLORS[h%COLORS.length]; }
+  function initials(name){ return (name||"?").split(/\s|-/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()||"?"; }
+  function who(name){ if(!name) return '<span class="who">—</span>'; return `<span class="who"><span class="av" style="background:${personColor(name)}">${esc(initials(name))}</span>${esc(name)}</span>`; }
+  function num(n){ return (typeof n==="number"?n:parseFloat(n)||0).toLocaleString("es-CO"); }
+  function money(n){ const v=parseFloat(n); if(!v) return "—"; return "$"+Math.round(v).toLocaleString("es-CO"); }
+  function fmtStamp(iso){ if(!iso) return ""; const d=new Date(iso); if(isNaN(d)) return iso; return d.toLocaleDateString("es-CO",{day:"2-digit",month:"short",year:"numeric"})+" · "+d.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"}); }
+  function monthOffLabel(off){ const d=new Date(2025,11+off,1); return MESHORT[d.getMonth()]+" "+String(d.getFullYear()).slice(2); }
+  function fmtVal(v){ if(v==null||v==="")return ""; const n=parseFloat(v); return (!isNaN(n)&&String(v).match(/^\s*-?[\d.]+\s*$/))?String(Math.round(n)):v; }
+
+  function contractTag(s){
+    const u=(s||"").toUpperCase();
+    if(!u) return '<span class="tag gray">Sin dato</span>';
+    if(u.includes("FIRMADO")) return `<span class="tag green">${esc(s)}</span>`;
+    if(u.includes("INACTIVO")) return `<span class="tag gray">${esc(s)}</span>`;
+    if(u.includes("DEMANDA")||u.includes("PROCESO")||u.includes("SOLICITAR")) return `<span class="tag amber">${esc(s)}</span>`;
+    if(u.includes("ENVIADO")||u.includes("CLIENTE")) return `<span class="tag blue">${esc(s)}</span>`;
+    return `<span class="tag gray">${esc(s)}</span>`;
+  }
+  function statusColor(v){
+    const u=(v||"").toString().toUpperCase();
+    if(!u||u==="0") return "gray";
+    if(u.includes("FACTURAD")||u.includes("APROBAD")||u.includes("OK")) return "green";
+    if(u.includes("ENVIAD")||u.includes("CARGAD")) return "blue";
+    if(u.includes("PENDIENTE")||u.includes("PDT")||u.includes("DEBE")||u.includes("PROCESO")) return "amber";
+    if(u.includes("SIN PAGOS")||u.includes("ARCHIVO")||u.includes("NO APLICA")||u.includes("INACTIVO")) return "gray";
+    return "blue";
+  }
+  // Vigencia parsing / alerta
+  function parseDate(s){ if(!s) return null; const m=String(s).match(/(\d{4})-(\d{2})-(\d{2})/); if(m) return new Date(+m[1],+m[2]-1,+m[3]); const d=new Date(s); return isNaN(d)?null:d; }
+  function vigInfo(s){
+    const d=parseDate(s);
+    if(!d){ const u=(s||"").toUpperCase(); if(u.includes("INACTIVO")) return {cls:"gray",txt:s||"—"}; if(u.includes("DEMANDA")) return {cls:"amber",txt:s}; return {cls:"gray",txt:s||"—"}; }
+    const today=new Date(); today.setHours(0,0,0,0);
+    const days=Math.round((d-today)/86400000);
+    const txt=d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});
+    if(days<0) return {cls:"red",txt:txt+" · vencido",days};
+    if(days<=60) return {cls:"amber",txt:txt+` · vence en ${days}d`,days};
+    return {cls:"green",txt,days};
+  }
+  const activeProjects=()=>DATA.proyectos.filter(p=>(p.estado||"activo")==="activo");
+  function estadoTag(e){ return (e||"activo")==="inactivo" ? '<span class="tag gray">Inactivo</span>' : '<span class="tag green">Activo</span>'; }
+
+  // ---------- Navegación ----------
+  const SECTIONS=[
+    {id:"resumen",label:"Resumen",sub:"Vista general de la operación",ico:svgHome()},
+    {id:"proyectos",label:"Proyectos",sub:"Proyectos a cargo y sus datos",ico:svgGrid(),search:true},
+    {id:"distribucion",label:"Distribución",sub:"Carga por responsable y analista",ico:svgUsers()},
+    {id:"clientes",label:"Clientes",sub:"Ficha y datos de contacto",ico:svgContact(),search:true},
+    {id:"contratos",label:"Contratos y vigencias",sub:"Estado de contratos y vencimientos",ico:svgDoc(),search:true},
+    {id:"facturacion",label:"Facturación",sub:"Prefactura, provisión y nómina por quincena",ico:svgBill(),search:true},
+    {id:"tareas",label:"Tareas",sub:"Pendientes, seguimientos y reuniones",ico:svgCheck2()},
+    {id:"calendario",label:"Calendario",sub:"Tareas y reuniones en el tiempo",ico:svgCal()},
+    {id:"notas",label:"Notas",sub:"Notas rápidas por importancia",ico:svgNote()},
+    {id:"entrega",label:"Entrega de turno",sub:"Novedades del turno y respuestas",ico:svgSwap()},
+    {id:"personal",label:"Personal activo",sub:"Matriz de personal (se puede reemplazar)",ico:svgId()},
+    {id:"registro",label:"Registro de actividad",sub:"Quién hizo qué y cuándo (solo líder)",ico:svgLog()}
+  ];
+  const COORD_SECTIONS=["tareas","notas","distribucion","clientes","calendario","personal","entrega"];
+  let current="resumen", searchTerm="";
+  let facFilter="todos"; const facOpen=new Set();
+  let calY=new Date().getFullYear(), calM=new Date().getMonth();
+  function renderNav(){
+    const secs=SECTIONS.filter(s=> userRole==="admin" || COORD_SECTIONS.includes(s.id));
+    $("#nav").innerHTML = secs.map(s=>{
+      let badge="";
+      if(s.id==="proyectos") badge=`<span class="badge">${DATA.proyectos.length}</span>`;
+      if(s.id==="tareas"){ const n=DATA.tareas.filter(t=>(t.tipo||"tarea")!=="reunion" && t.status!=="completada" && (userRole==="admin"||taskResps(t).includes(userName))).length; if(n) badge=`<span class="badge">${n}</span>`; }
+      if(s.id==="notas" && DATA.notas.length) badge=`<span class="badge">${DATA.notas.length}</span>`;
+      if(s.id==="entrega"){ const n=(DATA.entregas||[]).filter(e=>e.estado!=="leido").length; if(n) badge=`<span class="badge">${n}</span>`; }
+      return `<button class="nav-item ${s.id===current?"active":""}" data-sec="${s.id}"><span class="ico">${s.ico}</span>${s.label}${badge}</button>`;
+    }).join("");
+    $$(".nav-item").forEach(b=>b.onclick=()=>{ current=b.dataset.sec; searchTerm=""; render(); });
+  }
+  function render(){
+    if(userRole!=="admin" && !COORD_SECTIONS.includes(current)) current="tareas";
+    const sec=SECTIONS.find(s=>s.id===current);
+    $("#secTitle").textContent=sec.label; $("#secSub").textContent=sec.sub;
+    $("#searchWrap").hidden=!sec.search; if(sec.search){ $("#search").value=searchTerm; }
+    renderNav();
+    ({resumen:renderResumen,proyectos:renderProyectos,distribucion:renderDistribucion,clientes:renderClientes,contratos:renderContratos,facturacion:renderFacturacion,tareas:renderTareas,calendario:renderCalendario,notas:renderNotas,entrega:renderEntrega,personal:renderPersonal,registro:renderRegistro}[current])();
+  }
+
+  // ---------- Resumen ----------
+  function renderResumen(){
+    const ps=DATA.proyectos, act=activeProjects();
+    const personal=ps.reduce((a,p)=>a+(parseInt(p.personal)||0),0);
+    const porVencer=ps.filter(p=>{const v=vigInfo(p.vigencia);return v.days!=null&&v.days>=0&&v.days<=60;}).length;
+    const vencidos=ps.filter(p=>{const v=vigInfo(p.vigencia);return v.days!=null&&v.days<0;}).length;
+    const sinContrato=ps.filter(p=>!p.contrato).length;
+    const tPend=DATA.tareas.filter(t=>t.status!=="completada").length;
+    const tVenc=DATA.tareas.filter(t=>{if(t.status==="completada"||!t.date)return false;return parseDate(t.date)<new Date(new Date().toDateString());}).length;
+
+    const alerts=ps.map(p=>({p,v:vigInfo(p.vigencia)})).filter(x=>x.v.days!=null&&x.v.days<=60).sort((a,b)=>a.v.days-b.v.days);
+
+    $("#view").innerHTML=`
+      <div class="kpis">
+        <div class="kpi"><div class="num">${act.length}</div><div class="lbl">Proyectos activos</div></div>
+        <div class="kpi"><div class="num" style="color:var(--gray)">${ps.length-act.length}</div><div class="lbl">Inactivos</div></div>
+        <div class="kpi sky"><div class="num">${num(personal)}</div><div class="lbl">Personas en operación</div></div>
+        <div class="kpi amber"><div class="num">${porVencer}</div><div class="lbl">Contratos por vencer (60d)</div></div>
+        <div class="kpi red"><div class="num">${vencidos}</div><div class="lbl">Vigencias vencidas</div></div>
+        <div class="kpi"><div class="num">${tPend}</div><div class="lbl">Tareas pendientes</div></div>
+        <div class="kpi red"><div class="num">${tVenc}</div><div class="lbl">Tareas vencidas</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Alertas de vigencia</h3></div>
+        <div class="panel-body">
+          ${alerts.length?alerts.map(x=>`<div class="distrow"><div class="dn" style="width:auto;flex:1">${esc(x.p.proyecto)}</div><span class="tag ${x.v.cls}">${esc(x.v.txt)}</span></div>`).join(""):'<div class="empty" style="padding:24px"><p>Sin vencimientos próximos registrados. Completa las fechas de vigencia en Contratos.</p></div>'}
+        </div>
+      </div>
+      <div class="dist-grid">
+        <div class="panel"><div class="panel-head"><h3>Contratos por estado</h3></div><div class="panel-body">${byCount(ps,"contrato","Sin dato")}</div></div>
+        <div class="panel"><div class="panel-head"><h3>Estado de las tareas</h3></div><div class="panel-body">${tasksIndicator()}</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Ingresos facturados por mes</h3><span class="ceco" style="margin-left:auto">Total ${money(monthlyIncome().reduce((a,x)=>a+x.total,0))}</span></div>
+        <div class="panel-body">${incomeByMonth()}</div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Ingresos por cliente y mes</h3><span class="ceco" style="margin-left:auto">Cada fila un cliente · cada columna un mes</span></div>
+        <div class="panel-body flush"><div class="tbl-wrap">${incomeMatrix()}</div></div>
+      </div>`;
+  }
+  function incomeMatrix(){
+    const months=periodMonths();
+    const offs=[...new Set(months.map(m=>m.off))].sort((a,b)=>a-b);
+    const rows=DATA.proyectos.map(p=>{
+      const inc={}; (p.periodos||[]).forEach((y,i)=>{ const m=months[i]; if(!m)return; inc[m.off]=(inc[m.off]||0)+(parseFloat(y&&y.valor)||0); });
+      const total=Object.values(inc).reduce((a,v)=>a+v,0);
+      return {name:p.proyecto,inc,total};
+    }).filter(r=>r.total>0).sort((a,b)=>b.total-a.total);
+    if(!rows.length) return '<div class="empty" style="padding:24px">Aún no hay valores de facturación cargados.</div>';
+    const colTot={}; let grand=0;
+    rows.forEach(r=>offs.forEach(o=>{ colTot[o]=(colTot[o]||0)+(r.inc[o]||0); }));
+    offs.forEach(o=>grand+=colTot[o]);
+    const head=`<thead><tr><th class="mx-name">Cliente</th>${offs.map(o=>`<th style="text-align:right">${monthOffLabel(o)}</th>`).join("")}<th class="mx-total-h">Total</th></tr></thead>`;
+    const body=`<tbody>${rows.map(r=>`<tr><td class="mx-name">${esc(r.name)}</td>${offs.map(o=>`<td style="text-align:right">${r.inc[o]?money(r.inc[o]):'<span class="ceco">—</span>'}</td>`).join("")}<td class="mx-total-c">${money(r.total)}</td></tr>`).join("")}</tbody>`;
+    const foot=`<tfoot><tr><td class="mx-name mx-foot-name">TOTAL MES</td>${offs.map(o=>`<td class="mx-foot">${money(colTot[o])}</td>`).join("")}<td class="mx-total-c mx-foot">${money(grand)}</td></tr></tfoot>`;
+    return `<table>${head}${body}${foot}</table>`;
+  }
+  function tasksIndicator(){
+    const lbl={pendiente:["Pendientes","gray"],progreso:["En progreso","sky"],bloqueada:["Bloqueadas","amber"],completada:["Completadas","green"]};
+    const m={pendiente:0,progreso:0,bloqueada:0,completada:0};
+    DATA.tareas.forEach(t=>{ m[t.status]=(m[t.status]||0)+1; });
+    const max=Math.max(...Object.values(m),1);
+    const colr={gray:"var(--gray)",sky:"var(--sky)",amber:"var(--amber)",green:"var(--green)"};
+    return Object.keys(lbl).map(k=>`<div class="distrow"><div class="dn" style="width:130px">${lbl[k][0]}</div><div class="bar"><span style="width:${m[k]/max*100}%;background:${colr[lbl[k][1]]}"></span></div><div class="dv"><b>${m[k]}</b></div></div>`).join("")
+      + `<div class="distrow" style="border-top:2px solid var(--line);margin-top:4px"><div class="dn" style="width:130px;font-weight:700">Total</div><div class="bar" style="background:none"></div><div class="dv"><b>${DATA.tareas.length}</b></div></div>`;
+  }
+  function monthlyIncome(){
+    const months=periodMonths(); const inc={};
+    DATA.proyectos.forEach(p=>(p.periodos||[]).forEach((y,i)=>{ const mo=months[i]; if(!mo)return; inc[mo.off]=(inc[mo.off]||0)+(parseFloat(y&&y.valor)||0); }));
+    return Object.keys(inc).map(Number).sort((a,b)=>a-b).map(off=>({off,label:monthOffLabel(off),total:inc[off]}));
+  }
+  function incomeByMonth(){
+    const data=monthlyIncome().filter(x=>x.total>0);
+    if(!data.length) return '<div class="ceco" style="padding:10px 2px">Aún no hay valores de facturación cargados.</div>';
+    const max=Math.max(...data.map(x=>x.total),1);
+    return data.map(x=>`<div class="distrow"><div class="dn" style="width:90px">${esc(x.label)}</div><div class="bar"><span style="width:${x.total/max*100}%"></span></div><div class="dv" style="width:150px"><b>${money(x.total)}</b></div></div>`).join("");
+  }
+  function byCount(arr,field,fallback){
+    const m={}; arr.forEach(x=>{const k=(x[field]||fallback).toString();m[k]=(m[k]||0)+1;});
+    const max=Math.max(...Object.values(m),1);
+    return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="distrow"><div class="dn" style="width:170px">${esc(k)}</div><div class="bar"><span style="width:${v/max*100}%"></span></div><div class="dv"><b>${v}</b></div></div>`).join("");
+  }
+
+  let projView="activo";
+  function renderProyectos(){
+    const resp=[...new Set(DATA.proyectos.map(p=>p.responsable).filter(Boolean))];
+    const ana=[...new Set(DATA.proyectos.map(p=>p.analista).filter(Boolean))];
+    const nAct=DATA.proyectos.filter(p=>(p.estado||"activo")==="activo").length;
+    const nIna=DATA.proyectos.length-nAct;
+    $("#view").innerHTML=`
+      <div class="seg" style="margin-bottom:14px">
+        <button class="${projView==="activo"?"on":""}" data-pv="activo">Clientes activos <span class="cnt">${nAct}</span></button>
+        <button class="${projView==="inactivo"?"on":""}" data-pv="inactivo">Clientes inactivos <span class="cnt">${nIna}</span></button>
+      </div>
+      <div class="filterbar">
+        <select id="fResp"><option value="">Todos los responsables</option>${resp.map(r=>`<option>${esc(r)}</option>`).join("")}</select>
+        <select id="fAna"><option value="">Todos los analistas</option>${ana.map(r=>`<option>${esc(r)}</option>`).join("")}</select>
+        <button class="btn" id="addProj" style="margin-left:auto">＋ Nuevo proyecto</button>
+      </div>
+      <div class="panel"><div class="tbl-wrap"><table id="projTbl"></table></div></div>`;
+    $$("[data-pv]").forEach(b=>b.onclick=()=>{ projView=b.dataset.pv; renderProyectos(); });
+    const draw=()=>{
+      const fr=$("#fResp").value, fa=$("#fAna").value, q=searchTerm.toLowerCase();
+      const rows=DATA.proyectos.filter(p=>((p.estado||"activo")===projView)&&(!fr||p.responsable===fr)&&(!fa||p.analista===fa)&&(!q||(p.proyecto+p.ceco).toLowerCase().includes(q)));
+      $("#projTbl").innerHTML=`<thead><tr><th>Proyecto</th><th>Estado</th><th>CECO</th><th>Responsable</th><th>Analista</th><th>Personal</th><th>Contrato</th><th>Facturación</th><th>Nómina</th><th></th></tr></thead>
+        <tbody>${rows.map(p=>`<tr>
+          <td class="name">${esc(p.proyecto)}</td>
+          <td>${estadoTag(p.estado)}</td>
+          <td class="ceco">${esc(p.ceco)}</td>
+          <td>${who(p.responsable)}</td>
+          <td>${who(p.analista)}</td>
+          <td><b>${esc(p.personal)}</b></td>
+          <td>${contractTag(p.contrato)}</td>
+          <td>${esc(p.facturacion||"—")}</td>
+          <td>${esc(p.nomina||"—")}</td>
+          <td><div class="row-act"><button class="iconbtn" data-edit="${p.id}" title="Editar">${svgPen()}</button></div></td>
+        </tr>`).join("")||`<tr><td colspan="10" class="empty">Sin clientes ${projView==="activo"?"activos":"inactivos"} que coincidan.</td></tr>`}</tbody>`;
+      $$("[data-edit]").forEach(b=>b.onclick=()=>editProject(+b.dataset.edit));
+    };
+    $("#fResp").onchange=draw; $("#fAna").onchange=draw; $("#addProj").onclick=()=>editProject(null);
+    draw(); window.__redraw=draw;
+  }
+
+  function editProject(id){
+    const p = id==null ? {id:Date.now(),proyecto:"",ceco:"",responsable:"",analista:"",personal:0,estado:"activo",contrato:"",version:"",vigencia:"",facturacion:"",nomina:"",idNomina:"",traza:"",geo:"",incremento:"",observaciones:"",periodos:[],fechaIngreso:"",fechaRetiro:"",nit:"",contacto:"",telefono:"",correo:"",direccion:""} : DATA.proyectos.find(x=>x.id===id);
+    const F=(l,k,ph="")=>`<div class="field"><label>${l}</label><input id="e-${k}" value="${esc(p[k]??"")}" placeholder="${ph}"></div>`;
+    openModal(id==null?"Nuevo proyecto":"Editar proyecto",`
+      <div class="fgrid">
+        <div class="field full"><label>Proyecto</label><input id="e-proyecto" value="${esc(p.proyecto)}"></div>
+        <div class="field"><label>Estado del cliente</label><select id="e-estado"><option value="activo" ${(p.estado||"activo")==="activo"?"selected":""}>Activo</option><option value="inactivo" ${p.estado==="inactivo"?"selected":""}>Inactivo</option></select></div>
+        ${F("CECO","ceco")}
+        ${F("Responsable","responsable")}${F("Analista","analista")}
+        ${F("Personal","personal")}${F("ID de nómina","idNomina")}
+        <div class="field"><label>Contrato</label><input id="e-contrato" value="${esc(p.contrato)}" list="dl-contrato"><datalist id="dl-contrato"><option>FIRMADO</option><option>EN PROCESO</option><option>DEMANDA</option><option>ENVIADO POR EL CLIENTE</option><option>SE DEBE SOLICITAR</option><option>INACTIVO</option></datalist></div>
+        ${F("Versión / Otrosí","version")}
+        <div class="field"><label>Vigencia</label><input id="e-vigencia" value="${esc(p.vigencia)}" placeholder="AAAA-MM-DD"></div>
+        <div class="field"><label>Facturación</label><input id="e-facturacion" value="${esc(p.facturacion)}" list="dl-fact"><datalist id="dl-fact"><option>QUINCENAL</option><option>MENSUAL</option></datalist></div>
+        ${F("Nómina","nomina")}${F("Traza","traza")}${F("GEO","geo")}${F("Incremento","incremento")}
+        <div class="field full"><label>Observaciones</label><textarea id="e-observaciones">${esc(p.observaciones)}</textarea></div>
+      </div>`,
+      ()=>{
+        ["proyecto","ceco","responsable","analista","contrato","version","vigencia","facturacion","nomina","idNomina","traza","geo","incremento","observaciones"].forEach(k=>p[k]=$("#e-"+k).value.trim());
+        p.estado=$("#e-estado").value;
+        p.personal=parseInt($("#e-personal").value)||0;
+        logAction((id==null?"creó":"editó")+` el proyecto "${p.proyecto}"`);
+        if(id==null) DATA.proyectos.push(p);
+        save(); closeModal(); render();
+      }, id!=null?()=>{ if(confirm("¿Eliminar este proyecto?")){ DATA.proyectos=DATA.proyectos.filter(x=>x.id!==id); logAction(`eliminó el proyecto "${p.proyecto}"`); save(); closeModal(); render(); } }:null);
+  }
+
+  // ---------- Distribución ----------
+  function distByField(arr,field){
+    const m={}; arr.forEach(p=>{const k=p[field]||"—"; if(!m[k])m[k]={n:0,pers:0}; m[k].n++; m[k].pers+=parseInt(p.personal)||0;});
+    const max=Math.max(...Object.values(m).map(x=>x.n),1);
+    return Object.entries(m).sort((a,b)=>b[1].n-a[1].n).map(([k,v])=>`<div class="distrow"><div class="dn"><span class="av" style="background:${personColor(k)}">${esc(initials(k))}</span>${esc(k)}</div><div class="bar"><span style="width:${v.n/max*100}%"></span></div><div class="dv"><b>${v.n}</b> proy · <b>${v.pers}</b> pers</div></div>`).join("");
+  }
+  function coordCards(activos){
+    const by={};
+    activos.forEach(p=>{ const r=p.responsable||"Sin asignar"; (by[r]=by[r]||[]).push(p); });
+    const keys=Object.keys(by).sort((a,b)=>by[b].length-by[a].length);
+    return keys.map(r=>{
+      const list=by[r]; const pers=list.reduce((a,p)=>a+(parseInt(p.personal)||0),0);
+      return `<div class="coord-card">
+        <div class="coord-head"><span class="av" style="background:${personColor(r)}">${esc(initials(r))}</span>
+          <div><div class="coord-name">${esc(r)}</div><div class="ceco">${list.length} clientes · ${pers} personas</div></div>
+        </div>
+        <div class="coord-clients">${list.map(p=>`<div class="coord-cli"><span class="cc-dot" style="background:var(--green)"></span><span class="cc-name">${esc(p.proyecto)}</span><span class="cc-pers">${esc(p.personal)||0}</span></div>`).join("")}</div>
+      </div>`;
+    }).join("");
+  }
+  function renderDistribucion(){
+    const activos=DATA.proyectos.filter(p=>(p.estado||"activo")!=="inactivo");
+    $("#view").innerHTML=`
+      <div class="hint" style="font-size:12px;color:var(--ink-soft);background:var(--sky-bg);border:1px solid #cfeafb;padding:9px 12px;border-radius:9px;margin-bottom:16px">Muestra solo <b>clientes activos</b> (${activos.length} de ${DATA.proyectos.length}). Los inactivos no se cuentan aquí.</div>
+      <div class="dist-grid">
+        <div class="panel"><div class="panel-head"><h3>Por responsable</h3></div><div class="panel-body">${distByField(activos,"responsable")}</div></div>
+        <div class="panel"><div class="panel-head"><h3>Por analista</h3></div><div class="panel-body">${distByField(activos,"analista")}</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Clientes por coordinador</h3></div>
+        <div class="panel-body"><div class="coord-grid">${coordCards(activos)}</div></div>
+      </div>`;
+  }
+
+  // ---------- Clientes ----------
+  function renderClientes(){
+    $("#view").innerHTML=`
+      <div class="filterbar">
+        <select id="fCliEstado"><option value="">Activos e inactivos</option><option value="activo">Solo activos</option><option value="inactivo">Solo inactivos</option></select>
+        <button class="btn" id="addCli" style="margin-left:auto">＋ Agregar cliente</button>
+        <button class="btn ghost" id="addCol">＋ Agregar columna</button>
+      </div>
+      <div class="panel"><div class="tbl-wrap"><table id="cliTbl"></table></div></div>`;
+    const draw=()=>{
+      const q=searchTerm.toLowerCase(), fe=$("#fCliEstado").value;
+      const rows=DATA.proyectos.filter(p=>(!fe||(p.estado||"activo")===fe)&&(!q||(p.proyecto+p.ceco).toLowerCase().includes(q)));
+      const cols=DATA.cliCols||[];
+      $("#cliTbl").innerHTML=`<thead><tr>
+          <th>Cliente</th><th>Estado</th><th>Ingreso</th><th>Retiro</th><th>NIT</th><th>Contacto</th><th>Teléfono</th><th>Correo</th><th>Dirección</th>
+          ${cols.map(c=>`<th class="col-custom">${esc(c.label)} <button class="col-del" data-delcol="${c.id}" title="Eliminar columna">✕</button></th>`).join("")}
+          <th></th>
+        </tr></thead>
+        <tbody>${rows.map(p=>`<tr>
+          <td class="name">${esc(p.proyecto)}<div class="ceco">CECO ${esc(p.ceco)}</div></td>
+          <td><select class="cell-input" data-id="${p.id}" data-k="estado"><option value="activo" ${(p.estado||"activo")==="activo"?"selected":""}>Activo</option><option value="inactivo" ${p.estado==="inactivo"?"selected":""}>Inactivo</option></select></td>
+          <td><input type="date" class="cell-input" data-id="${p.id}" data-k="fechaIngreso" value="${esc(p.fechaIngreso||"")}"></td>
+          <td><input type="date" class="cell-input" data-id="${p.id}" data-k="fechaRetiro" value="${esc(p.fechaRetiro||"")}"></td>
+          ${["nit","contacto","telefono","correo","direccion"].map(k=>`<td><input class="cell-input" data-id="${p.id}" data-k="${k}" value="${esc(p[k]||"")}"></td>`).join("")}
+          ${cols.map(c=>`<td><input class="cell-input" data-id="${p.id}" data-col="${c.id}" value="${esc((p.extra&&p.extra[c.id])||"")}"></td>`).join("")}
+          <td><button class="iconbtn del" data-delrow="${p.id}" title="Eliminar cliente">${svgTrash()}</button></td>
+        </tr>`).join("")||`<tr><td colspan="${10+cols.length}" class="empty">Sin clientes.</td></tr>`}</tbody>`;
+      // edición de campos base
+      $$("#cliTbl .cell-input[data-k]").forEach(inp=>inp.onchange=()=>{ const p=DATA.proyectos.find(x=>x.id===+inp.dataset.id); p[inp.dataset.k]=(inp.value||"").trim?inp.value.trim():inp.value; logThrottled("cli"+p.id, `editó datos del cliente "${p.proyecto}"`); save(); if(inp.dataset.k==="estado"){ draw(); renderNav(); } });
+      // edición de columnas personalizadas
+      $$("#cliTbl .cell-input[data-col]").forEach(inp=>inp.onchange=()=>{ const p=DATA.proyectos.find(x=>x.id===+inp.dataset.id); p.extra=p.extra||{}; p.extra[inp.dataset.col]=inp.value.trim(); save(); });
+      // eliminar columna
+      $$("#cliTbl [data-delcol]").forEach(b=>b.onclick=()=>{ if(confirm("¿Eliminar esta columna y sus datos?")){ const id=b.dataset.delcol; DATA.cliCols=DATA.cliCols.filter(c=>c.id!==id); DATA.proyectos.forEach(p=>{ if(p.extra) delete p.extra[id]; }); save(); draw(); } });
+      // eliminar fila (cliente)
+      $$("#cliTbl [data-delrow]").forEach(b=>b.onclick=()=>{ const p=DATA.proyectos.find(x=>x.id===+b.dataset.delrow); if(confirm(`¿Eliminar el cliente "${p.proyecto}"? También se quita de Proyectos, Contratos y Facturación.`)){ DATA.proyectos=DATA.proyectos.filter(x=>x.id!==+b.dataset.delrow); save(); render(); } });
+    };
+    $("#fCliEstado").onchange=draw;
+    $("#addCli").onclick=()=>{ const name=prompt("Nombre del nuevo cliente:"); if(name&&name.trim()){ DATA.proyectos.push({id:Date.now(),proyecto:name.trim(),ceco:"",responsable:"",analista:"",personal:0,estado:"activo",contrato:"",version:"",vigencia:"",facturacion:"",nomina:"",idNomina:"",traza:"",geo:"",incremento:"",observaciones:"",periodos:[],fechaIngreso:"",fechaRetiro:"",nit:"",contacto:"",telefono:"",correo:"",direccion:"",extra:{}}); save(); render(); } };
+    $("#addCol").onclick=()=>{ const label=prompt("Nombre de la nueva columna:"); if(label&&label.trim()){ DATA.cliCols=DATA.cliCols||[]; DATA.cliCols.push({id:"c"+Date.now().toString(36),label:label.trim()}); save(); draw(); } };
+    draw(); window.__redraw=draw;
+  }
+
+  // ---------- Contratos ----------
+  function renderContratos(){
+    $("#view").innerHTML=`
+      <div class="panel"><div class="tbl-wrap"><table id="conTbl"></table></div></div>`;
+    const draw=()=>{
+      const q=searchTerm.toLowerCase();
+      const rows=DATA.proyectos.filter(p=>!q||(p.proyecto+p.ceco).toLowerCase().includes(q));
+      $("#conTbl").innerHTML=`<thead><tr><th>Proyecto</th><th>CECO</th><th>Estado del contrato</th><th>Versión / Otrosí</th><th>Vigencia</th><th>Alerta</th></tr></thead>
+        <tbody>${rows.map(p=>{const v=vigInfo(p.vigencia);return `<tr>
+          <td class="name">${esc(p.proyecto)}</td><td class="ceco">${esc(p.ceco)}</td>
+          <td><input class="cell-input" data-id="${p.id}" data-k="contrato" value="${esc(p.contrato||"")}" list="dl-con"></td>
+          <td><input class="cell-input" data-id="${p.id}" data-k="version" value="${esc(p.version||"")}"></td>
+          <td><input class="cell-input" data-id="${p.id}" data-k="vigencia" value="${esc(p.vigencia||"")}" placeholder="AAAA-MM-DD"></td>
+          <td><span class="tag ${v.cls}">${esc(v.txt)}</span></td>
+        </tr>`;}).join("")}</tbody>
+        <datalist id="dl-con"><option>FIRMADO</option><option>EN PROCESO</option><option>DEMANDA</option><option>ENVIADO POR EL CLIENTE</option><option>SE DEBE SOLICITAR</option><option>INACTIVO</option></datalist>`;
+      $$("#conTbl .cell-input").forEach(inp=>inp.onchange=()=>{ const p=DATA.proyectos.find(x=>x.id===+inp.dataset.id); p[inp.dataset.k]=inp.value.trim(); save(); draw(); });
+    };
+    draw(); window.__redraw=draw;
+  }
+
+  // ---------- Facturación ----------
+  function lastPeriod(p){
+    const per=p.periodos||[];
+    for(let i=per.length-1;i>=0;i--){ const x=per[i]; if(x.prefactura||x.provision||x.nomina||x.valor) return {x,i}; }
+    return null;
+  }
+  function pendState(v){
+    const u=(v||"").toString().toUpperCase().trim();
+    if(!u) return "vacio";
+    if(u.includes("NO APLICA")||u==="N/A"||u==="NA"||u.includes("SIN PAGOS")||u.includes("ARCHIVO")||u.includes("INACTIVO")) return "na";
+    if(u.includes("FACTURAD")||u.includes("APROBAD")) return "listo";
+    return "pend";
+  }
+  function pendTag(v){
+    const s=pendState(v);
+    if(s==="vacio") return '<span class="tag gray">—</span>';
+    const cls=s==="listo"?"green":(s==="pend"?"amber":"gray");
+    return `<span class="tag ${cls}">${esc(v)}</span>`;
+  }
+  function isPend(p,dim){ const lp=lastPeriod(p); if(!lp) return false; return pendState(lp.x[dim])==="pend"; }
+
+  const facDims={prefactura:true,provision:true,nomina:true,idnomina:true,valor:true};
+  const DIMLBL={prefactura:"Prefact.",provision:"Provis.",nomina:"Nómina",idnomina:"ID Nóm.",valor:"Valor"};
+  const facCollapsed=new Set();
+  const facRow={responsable:"",analista:"",estado:"",contrato:""};
+  const facCellF={};   // filtros por columna específica: "indice:dimension" -> valor
+  let facMax=false;    // matriz a pantalla completa
+  function maxPer(){ return Math.max(1,...DATA.proyectos.map(p=>(p.periodos||[]).length)); }
+  function periodQ(i){ for(const p of DATA.proyectos){ const y=(p.periodos||[])[i]; if(y&&y.q) return y.q; } return ""; }
+  function miniDots(per){ if(!per) return '<span class="ceco">·</span>'; return ["prefactura","provision","nomina"].map(k=>{const s=pendState(per[k]);const c=s==="listo"?"var(--green)":(s==="pend"?"var(--amber)":(s==="na"?"var(--gray)":"var(--line)"));return `<span class="mdot" style="background:${c}"></span>`;}).join(""); }
+  const MESHORT=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  function periodMonths(){
+    const MP=maxPer(); const out=[];
+    for(let i=0;i<MP;i++){
+      const q=periodQ(i);
+      let off=0;
+      if(i>0){ const qp=periodQ(i-1); off = (q==="2Q" && qp==="1Q") ? out[i-1].off : out[i-1].off+1; }
+      out.push({q,off});
+    }
+    return out;
+  }
+  function periodLabel(i, months){
+    const m=months[i]||{q:"",off:i};
+    const quinc = m.q==="1Q"?"1ª quinc." : (m.q==="2Q"?"2ª quinc." : m.q);
+    const start="2025-12";
+    const [Y,M]=start.split("-").map(Number);
+    const d=new Date(Y,(M-1)+m.off,1);
+    return {main:`${MESHORT[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`, sub:quinc};
+  }
+
+  function renderFacturacion(){
+    const uniq=f=>[...new Set(DATA.proyectos.map(p=>p[f]).filter(Boolean))].sort();
+    const uniqDimPer=(dim,i)=>{ const s=new Set(); DATA.proyectos.forEach(p=>{ const y=(p.periodos||[])[i]; if(y&&y[dim])s.add(y[dim]); }); return [...s].sort(); };
+    const cellFilters=Object.entries(facCellF).filter(([k,v])=>v);
+    const nDims=Object.values(facDims).filter(Boolean).length||1;
+    const visDims=["prefactura","provision","nomina","idnomina","valor"].filter(k=>facDims[k]);
+    const MP=maxPer();
+    $("#view").innerHTML=`
+      <div class="filterbar">
+        <select id="mResp"><option value="">Responsable: todos</option>${uniq("responsable").map(r=>`<option ${facRow.responsable===r?"selected":""}>${esc(r)}</option>`).join("")}</select>
+        <select id="mAna"><option value="">Analista: todos</option>${uniq("analista").map(r=>`<option ${facRow.analista===r?"selected":""}>${esc(r)}</option>`).join("")}</select>
+        <select id="mEst"><option value="">Estado: todos</option><option value="activo" ${facRow.estado==="activo"?"selected":""}>Activo</option><option value="inactivo" ${facRow.estado==="inactivo"?"selected":""}>Inactivo</option></select>
+        <select id="mCon"><option value="">Contrato: todos</option>${uniq("contrato").map(r=>`<option ${facRow.contrato===r?"selected":""}>${esc(r)}</option>`).join("")}</select>
+      </div>
+      <div class="filterbar" style="margin-top:-6px">
+        <span style="font-size:12px;color:var(--ink-soft);font-weight:600">Mostrar:</span>
+        ${["prefactura","provision","nomina","idnomina","valor"].map(k=>`<label class="dimchk"><input type="checkbox" data-dim="${k}" ${facDims[k]?"checked":""}> ${DIMLBL[k]}</label>`).join("")}
+        <span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span>
+        <button class="btn ghost sm" id="collAll">Contraer todo</button>
+        <button class="btn ghost sm" id="expAll">Expandir todo</button>
+        <span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span>
+        <button class="btn sm" id="addMonth">＋ Agregar mes</button>
+        <button class="btn ghost sm" id="mxMax">⛶ Ampliar</button>
+        ${cellFilters.length?`<span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span><button class="btn ghost sm" id="clearDimF">✕ Quitar filtros de columna (${cellFilters.length})</button>`:""}
+      </div>
+      <div class="panel flush ${facMax?"maximized":""}" id="mxPanel">
+        ${facMax?'<div class="mx-max-bar"><b>Facturación · vista ampliada</b><button class="btn sm" id="mxMin">✕ Reducir</button></div>':""}
+        <div class="tbl-wrap mx-wrap"><table class="mx" id="mxTbl"></table></div>
+      </div>`;
+    document.body.style.overflow = facMax ? "hidden" : "";
+
+    const draw=()=>{
+      const q=searchTerm.toLowerCase();
+      const rows=DATA.proyectos.filter(p=>
+        (!facRow.responsable||p.responsable===facRow.responsable)&&
+        (!facRow.analista||p.analista===facRow.analista)&&
+        (!facRow.estado||(p.estado||"activo")===facRow.estado)&&
+        (!facRow.contrato||p.contrato===facRow.contrato)&&
+        cellFilters.every(([key,v])=>{ const s=key.split(":"); const y=(p.periodos||[])[+s[0]]; const cur=y?(y[s[1]]||""):""; return v==="__EMPTY__" ? cur==="" : cur===v; })&&
+        (!q||p.proyecto.toLowerCase().includes(q)));
+      const months=periodMonths();
+      // totales por mes (columna) sobre las filas visibles
+      const colTot=new Array(MP).fill(0); let grand=0;
+      rows.forEach(p=>{ (p.periodos||[]).forEach((y,i)=>{ if(i<MP){ const v=parseFloat(y&&y.valor)||0; colTot[i]+=v; grand+=v; } }); });
+      // encabezados
+      let h1=`<th class="mx-name" rowspan="2">Cliente</th>`;
+      let h2="";
+      for(let i=0;i<MP;i++){
+        const L=periodLabel(i,months);
+        if(facCollapsed.has(i)){
+          h1+=`<th class="mx-col mx-collapsed" rowspan="2" data-exp="${i}" title="Expandir">${esc(L.main)}<div class="mxq">${esc(L.sub)}</div>▸</th>`;
+        }else{
+          h1+=`<th class="mx-col" colspan="${nDims}" data-col="${i}" title="Contraer">${esc(L.main)} <span class="mxq">${esc(L.sub)}</span> ◂</th>`;
+          h2+=visDims.map(k=>{
+            if(k==="valor"||k==="idnomina") return `<th class="mx-sub">${DIMLBL[k]}</th>`;
+            const key=i+":"+k, opts=uniqDimPer(k,i), act=facCellF[key]||"";
+            const hasEmpty=DATA.proyectos.some(p=>{ const y=(p.periodos||[])[i]; return !y||!y[k]; });
+            return `<th class="mx-sub ${act?"mx-sub-on":""}"><select class="mx-filter" data-fkey="${key}"><option value="">${DIMLBL[k]} ▾</option>${hasEmpty?`<option value="__EMPTY__" ${act==="__EMPTY__"?"selected":""}>(vacío)</option>`:""}${opts.map(v=>`<option ${act===v?"selected":""}>${esc(v)}</option>`).join("")}</select></th>`;
+          }).join("");
+        }
+      }
+      h1+=`<th class="mx-total-h" rowspan="2">Total<br>cliente</th>`;
+      // cuerpo
+      const body=rows.map(p=>{
+        let tds=`<td class="mx-name"><div class="mxc-name">${esc(p.proyecto)}</div><div class="ceco">${esc(p.responsable||"")}${p.idNomina?" · nóm "+esc(p.idNomina):""}</div></td>`;
+        let rowTot=0;
+        for(let i=0;i<MP;i++){
+          const y=(p.periodos||[])[i];
+          rowTot += parseFloat(y&&y.valor)||0;
+          if(facCollapsed.has(i)){
+            tds+=`<td class="mx-collapsed">${miniDots(y)}</td>`;
+          }else{
+            tds+=visDims.map(k=>{
+              if(k==="valor") return `<td><input class="mx-in" data-id="${p.id}" data-i="${i}" data-k="valor" value="${esc(fmtVal(y?y.valor:""))}"></td>`;
+              if(k==="idnomina") return `<td><input class="mx-in mx-idn" data-id="${p.id}" data-i="${i}" data-k="idnomina" value="${esc(y?(y.idnomina||""):"")}" placeholder="—"></td>`;
+              const s=y?pendState(y[k]):"vacio";
+              return `<td><input class="mx-in mx-${s}" data-id="${p.id}" data-i="${i}" data-k="${k}" value="${esc(y?(y[k]||""):"")}"></td>`;
+            }).join("");
+          }
+        }
+        tds+=`<td class="mx-total-c">${money(rowTot)}</td>`;
+        return `<tr>${tds}</tr>`;
+      }).join("")||`<tr><td class="mx-name">—</td><td colspan="${MP*nDims+1}" class="empty">Ningún cliente coincide.</td></tr>`;
+      // pie: total por mes
+      let foot="";
+      if(rows.length){
+        foot=`<td class="mx-name mx-foot-name">TOTAL MES</td>`;
+        for(let i=0;i<MP;i++){
+          if(facCollapsed.has(i)){ foot+=`<td class="mx-foot">${money(colTot[i])}</td>`; }
+          else{ const totDim = facDims.valor ? "valor" : [...visDims].reverse().find(k=>k!=="idnomina"); foot+=visDims.map(k=>`<td class="mx-foot">${k===totDim?money(colTot[i]):""}</td>`).join(""); }
+        }
+        foot+=`<td class="mx-total-c mx-foot">${money(grand)}</td>`;
+      }
+      $("#mxTbl").innerHTML=`<thead><tr>${h1}</tr><tr>${h2}</tr></thead><tbody>${body}</tbody>${foot?`<tfoot><tr>${foot}</tr></tfoot>`:""}`;
+      // eventos
+      $$("#mxTbl .mx-filter").forEach(sel=>{
+        sel.onchange=()=>{ const k=sel.dataset.fkey; if(sel.value) facCellF[k]=sel.value; else delete facCellF[k]; renderFacturacion(); };
+        sel.onclick=e=>e.stopPropagation();
+      });
+      $$("#mxTbl [data-col]").forEach(th=>th.onclick=()=>{ facCollapsed.add(+th.dataset.col); draw(); });
+      $$("#mxTbl [data-exp]").forEach(th=>th.onclick=()=>{ facCollapsed.delete(+th.dataset.exp); draw(); });
+      $$("#mxTbl .mx-in").forEach(inp=>inp.onchange=()=>{
+        const p=DATA.proyectos.find(x=>x.id===+inp.dataset.id); const i=+inp.dataset.i, k=inp.dataset.k;
+        p.periodos=p.periodos||[]; while(p.periodos.length<=i) p.periodos.push({q:"",prefactura:"",provision:"",nomina:"",valor:"",idnomina:""});
+        p.periodos[i][k]=inp.value.trim(); logThrottled("fac"+p.id, `editó facturación de "${p.proyecto}"`); save();
+        if(k!=="valor"&&k!=="idnomina"){ inp.className="mx-in mx-"+pendState(inp.value); }
+      });
+    };
+    $("#mResp").onchange=e=>{facRow.responsable=e.target.value;draw();};
+    $("#mAna").onchange=e=>{facRow.analista=e.target.value;draw();};
+    $("#mEst").onchange=e=>{facRow.estado=e.target.value;draw();};
+    $("#mCon").onchange=e=>{facRow.contrato=e.target.value;draw();};
+    if($("#mxMax")) $("#mxMax").onclick=()=>{ facMax=true; renderFacturacion(); };
+    if($("#mxMin")) $("#mxMin").onclick=()=>{ facMax=false; renderFacturacion(); };
+    if($("#clearDimF")) $("#clearDimF").onclick=()=>{ Object.keys(facCellF).forEach(k=>delete facCellF[k]); renderFacturacion(); };
+    $$("[data-dim]").forEach(c=>c.onchange=()=>{ facDims[c.dataset.dim]=c.checked; renderFacturacion(); });
+    $("#collAll").onclick=()=>{ for(let i=0;i<MP;i++)facCollapsed.add(i); draw(); };
+    $("#expAll").onclick=()=>{ facCollapsed.clear(); draw(); };
+    $("#addMonth").onclick=()=>{
+      const n=maxPer(); const lastQ = n>0 ? periodQ(n-1) : "2Q";
+      const q1 = lastQ==="1Q"?"2Q":"1Q"; const q2 = q1==="1Q"?"2Q":"1Q";
+      DATA.proyectos.forEach(p=>{ p.periodos=p.periodos||[];
+        while(p.periodos.length<n) p.periodos.push({q:"",prefactura:"",provision:"",nomina:"",valor:""});
+        p.periodos.push({q:q1,prefactura:"",provision:"",nomina:"",valor:""});
+        p.periodos.push({q:q2,prefactura:"",provision:"",nomina:"",valor:""});
+      });
+      save(); renderFacturacion();
+    };
+    draw(); window.__redraw=draw;
+  }
+
+  // ---------- Tareas ----------
+  const TSTATUS={pendiente:"Pendiente",progreso:"En progreso",bloqueada:"Bloqueada",completada:"Completada"};
+  function dueTag(d,hora){ if(!d) return ""; const dt=parseDate(d), t=new Date(new Date().toDateString()); const days=Math.round((dt-t)/86400000); let txt=dt.toLocaleDateString("es-CO",{day:"numeric",month:"short"}); if(hora)txt+=" "+hora; if(days<0)return `<span class="due over">${txt}</span>`; if(days<=2)return `<span class="due soon">${days===0?"Hoy":days+"d"} · ${txt}</span>`; return `<span class="due ok">${txt}</span>`; }
+  function taskResps(t){ return Array.isArray(t.responsables)?t.responsables:(t.responsable?[t.responsable]:[]); }
+  let taskView="cards";
+  function renderTareas(){
+    const resps=[...new Set([...ACCOUNTS.map(a=>a.name), ...DATA.tareas.flatMap(t=>taskResps(t))].filter(Boolean))].sort();
+    $("#view").innerHTML=`
+      <div class="filterbar">
+        <button class="btn" id="addTask">＋ Nueva tarea</button>
+        <button class="btn" id="addMeet" style="background:var(--accent-deep)">＋ Nueva reunión</button>
+        <select id="tTipo"><option value="">Tareas y reuniones</option><option value="tarea">Solo tareas</option><option value="reunion">Solo reuniones</option></select>
+        <select id="tFilter"><option value="">Abiertas (activas)</option><option value="pendiente">Pendientes</option><option value="progreso">En progreso</option><option value="bloqueada">Bloqueadas</option><option value="cerradas">Cerradas ✓</option></select>
+        ${userRole==="admin"?`<select id="tResp"><option value="">Todos los responsables</option>${resps.map(r=>`<option>${esc(r)}</option>`).join("")}</select>`:""}
+        <div class="view-toggle" style="margin-left:auto">
+          <button class="${taskView==="cards"?"on":""}" id="tvCards" title="Vista en cuadros">▦ Cuadros</button>
+          <button class="${taskView==="list"?"on":""}" id="tvList" title="Vista en filas">☰ Filas</button>
+        </div>
+      </div>
+      <div class="task-list ${taskView==="list"?"rows":""}" id="taskList"></div>`;
+    $("#tvCards").onclick=()=>{ taskView="cards"; renderTareas(); };
+    $("#tvList").onclick=()=>{ taskView="list"; renderTareas(); };
+    const draw=()=>{
+      const f=$("#tFilter").value, fr=$("#tResp")?$("#tResp").value:"", ft=$("#tTipo").value;
+      const rows=DATA.tareas.filter(t=>{
+        const st=t.status, rs=taskResps(t);
+        let okf = f==="" ? st!=="completada" : (f==="cerradas" ? st==="completada" : st===f);
+        if(userRole!=="admin" && !rs.includes(userName)) return false;   // coordinador: solo las suyas o en equipo
+        return okf && (!fr||rs.includes(fr)) && (!ft||(t.tipo||"tarea")===ft);
+      }).sort((a,b)=>(a.date||"9999").localeCompare(b.date||"9999"));
+      $("#taskList").innerHTML=rows.length?rows.map(t=>{const r=(t.tipo==="reunion");const rs=taskResps(t);return `<div class="task ${t.status==="completada"?"done":""} ${r?"meet":""}">
+        <div class="tt">${r?"📅 ":""}${esc(t.title)}</div>
+        <div class="tm">${r?'<span class="tag" style="background:var(--sky-bg);color:var(--accent)">Reunión</span>':""}${t.client?`<span class="tag gray">${esc(t.client)}</span>`:""}${dueTag(t.date,t.hora)}<span class="prio ${t.prio}">${t.prio}</span></div>
+        ${rs.length?`<div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${rs.map(x=>who(x)).join("")}${rs.length>1?'<span class="tag blue" style="font-size:9px">En equipo</span>':""}</div>`:""}
+        ${t.cierre?`<div class="cierre-box">✔ <b>Observación:</b> ${esc(t.cierre)}${t.cierreTs?`<span class="ceco"> · ${esc(fmtStamp(t.cierreTs))}</span>`:""}</div>`:""}
+        <div class="tfoot">
+          <select class="status-sel ${t.status}" data-st="${t.id}">${Object.keys(TSTATUS).map(k=>`<option value="${k}" ${k===t.status?"selected":""}>${TSTATUS[k]}</option>`).join("")}</select>
+          <button class="iconbtn ${t.notas&&t.notas.length?"has-notes":""}" data-nt="${t.id}" title="Avances / bitácora">📝${t.notas&&t.notas.length?`<span class="nt-badge">${t.notas.length}</span>`:""}</button>
+          <button class="iconbtn" data-et="${t.id}" title="Editar">${svgPen()}</button>
+          <button class="iconbtn del" data-dt="${t.id}" title="Eliminar">${svgTrash()}</button>
+        </div></div>`;}).join(""):`<div class="empty" style="grid-column:1/-1"><h4>${f==="cerradas"?"Sin tareas cerradas":"Sin tareas activas"}</h4><p>${userRole!=="admin"?"Aquí verás las tareas que te asignen o las de equipo donde estés incluido.":(f==="cerradas"?"Cuando completes tareas aparecerán aquí.":"Crea una tarea o reunión con los botones de arriba.")}</p></div>`;
+      $$("[data-st]").forEach(s=>s.onchange=()=>{
+        const t=DATA.tareas.find(x=>x.id===+s.dataset.st); const prev=t.status; t.status=s.value;
+        if(s.value==="completada" && prev!=="completada"){
+          const obs=prompt("Tarea completada ✓\nEscribe una observación de cierre (opcional), para consultarla después:", t.cierre||"");
+          if(obs!==null) t.cierre=obs.trim();
+          t.cierreTs=new Date().toISOString();
+        }
+        logAction(`cambió el estado de la tarea "${t.title}" a ${TSTATUS[s.value]||s.value}`);
+        save(); draw(); renderNav();
+      });
+      $$("[data-nt]").forEach(b=>b.onclick=()=>openNotes(+b.dataset.nt));
+      $$("[data-et]").forEach(b=>b.onclick=()=>editTask(+b.dataset.et));
+      $$("[data-dt]").forEach(b=>b.onclick=()=>{ if(confirm("¿Eliminar?")){ const tt=DATA.tareas.find(t=>t.id===+b.dataset.dt); DATA.tareas=DATA.tareas.filter(t=>t.id!==+b.dataset.dt); logAction(`eliminó la tarea "${tt?tt.title:""}"`); save(); draw(); renderNav(); } });
+    };
+    $("#tFilter").onchange=draw; if($("#tResp")) $("#tResp").onchange=draw; $("#tTipo").onchange=draw;
+    $("#addTask").onclick=()=>editTask(null,"tarea"); $("#addMeet").onclick=()=>editTask(null,"reunion");
+    draw();
+  }
+  function openNotes(id){
+    const t=DATA.tareas.find(x=>x.id===id); if(!t) return; t.notas=t.notas||[];
+    const list=t.notas.length
+      ? t.notas.slice().reverse().map((n,ri)=>{ const real=t.notas.length-1-ri; return `<div class="note-item"><div class="note-top"><span class="note-ts">${esc(fmtStamp(n.ts))}</span><button class="note-del" data-notedel="${real}" title="Eliminar avance">✕</button></div><div class="note-text">${esc(n.text)}</div></div>`; }).join("")
+      : '<div class="ceco" style="padding:10px 2px">Aún no hay avances registrados.</div>';
+    openModal("Avances · "+t.title, `
+      <div class="note-add-row">
+        <textarea id="n-text" placeholder="Escribe un avance… (se registra con fecha y hora)"></textarea>
+        <button class="btn" id="n-add">Registrar</button>
+      </div>
+      <div class="note-list">${list}</div>`, ()=>closeModal(), null);
+    const add=()=>{ const v=$("#n-text").value.trim(); if(!v)return; t.notas.push({text:v,ts:new Date().toISOString()}); save(); renderTareas(); openNotes(id); };
+    $("#n-add").onclick=add;
+    $("#n-text").addEventListener("keydown",e=>{ if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)) add(); });
+    $$("[data-notedel]").forEach(b=>b.onclick=()=>{ if(confirm("¿Eliminar este avance?")){ t.notas.splice(+b.dataset.notedel,1); save(); renderTareas(); openNotes(id); } });
+    setTimeout(()=>{ const el=$("#n-text"); if(el) el.focus(); },60);
+  }
+  function editTask(id, defaultTipo){
+    const t=id==null?{id:Date.now(),title:"",client:"",responsable:"",responsables:(userRole!=="admin"?[userName]:[]),date:"",hora:"",tipo:defaultTipo||"tarea",prio:"media",status:"pendiente"}:DATA.tareas.find(x=>x.id===id);
+    const clientes=[...new Set(DATA.proyectos.map(p=>p.proyecto).filter(Boolean))];
+    const coords=ACCOUNTS.map(a=>a.name);
+    const sel=taskResps(t);
+    const esR = (t.tipo||"tarea")==="reunion";
+    openModal(id==null?(esR?"Nueva reunión":"Nueva tarea"):(esR?"Editar reunión":"Editar tarea"),`
+      <div class="fgrid">
+        <div class="field"><label>Tipo</label><select id="t-tipo"><option value="tarea" ${!esR?"selected":""}>Tarea</option><option value="reunion" ${esR?"selected":""}>Reunión / recordatorio</option></select></div>
+        <div class="field"><label>Prioridad</label><select id="t-prio"><option value="alta" ${t.prio==="alta"?"selected":""}>Alta</option><option value="media" ${t.prio==="media"?"selected":""}>Media</option><option value="baja" ${t.prio==="baja"?"selected":""}>Baja</option></select></div>
+        <div class="field full"><label>Título</label><input id="t-title" value="${esc(t.title)}" placeholder="${esR?"Ej: Reunión de seguimiento con Coopidrogas":"Ej: Revisar prefactura"}"></div>
+        <div class="field full"><label>Cliente / Proyecto</label>
+          <select id="t-client"><option value="">(sin cliente)</option>${clientes.map(c=>`<option ${c===t.client?"selected":""}>${esc(c)}</option>`).join("")}</select>
+        </div>
+        <div class="field full"><label>Responsable(s) ${userRole==="admin"?"— marca uno o varios (equipo)":""}</label>
+          <div class="chk-multi" id="t-resps">${coords.map(c=>`<label class="dimchk"><input type="checkbox" value="${esc(c)}" ${sel.includes(c)?"checked":""} ${userRole!=="admin"&&c!==userName?"disabled":""}> ${esc(c)}</label>`).join("")}</div>
+        </div>
+        <div class="field"><label>Estado</label><select id="t-status">${Object.keys(TSTATUS).map(k=>`<option value="${k}" ${k===t.status?"selected":""}>${TSTATUS[k]}</option>`).join("")}</select></div>
+        <div class="field"><label>Fecha</label><input type="date" id="t-date" value="${esc(t.date)}"></div>
+        <div class="field"><label>Hora (opcional)</label><input type="time" id="t-hora" value="${esc(t.hora||"")}"></div>
+        <div class="field full"><label>Observación de cierre</label><textarea id="t-cierre" placeholder="Qué quedó al completar la tarea (se puede llenar al marcarla completada)">${esc(t.cierre||"")}</textarea></div>
+      </div>`,()=>{
+        t.title=$("#t-title").value.trim(); if(!t.title){alert("Escribe el título.");return;}
+        t.tipo=$("#t-tipo").value; t.client=$("#t-client").value;
+        t.responsables=[...document.querySelectorAll("#t-resps input:checked")].map(c=>c.value);
+        if(userRole!=="admin" && !t.responsables.includes(userName)) t.responsables.push(userName);
+        t.responsable=t.responsables[0]||"";
+        t.date=$("#t-date").value; t.hora=$("#t-hora").value; t.prio=$("#t-prio").value; t.status=$("#t-status").value;
+        t.cierre=$("#t-cierre").value.trim();
+        logAction((id==null?"creó":"editó")+` la tarea "${t.title}"`);
+        if(id==null) DATA.tareas.push(t);
+        save(); closeModal(); render();
+      }, id!=null?()=>{ if(confirm("¿Eliminar?")){ DATA.tareas=DATA.tareas.filter(x=>x.id!==id); save(); closeModal(); render(); } }:null);
+  }
+
+  // ---------- Calendario ----------
+  const MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  const DIAS=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+  function renderCalendario(){
+    const first=new Date(calY,calM,1);
+    let off=(first.getDay()+6)%7; // lunes=0
+    const daysInMonth=new Date(calY,calM+1,0).getDate();
+    const todayStr=new Date().toISOString().slice(0,10);
+    // items por fecha
+    const byDate={};
+    DATA.tareas.filter(t=>t.date && t.status!=="completada" && (userRole==="admin" || taskResps(t).includes(userName))).forEach(t=>{ (byDate[t.date]=byDate[t.date]||[]).push(t); });
+    let cells="";
+    for(let i=0;i<off;i++) cells+=`<div class="cal-cell empty"></div>`;
+    for(let d=1;d<=daysInMonth;d++){
+      const ds=`${calY}-${String(calM+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const items=(byDate[ds]||[]).sort((a,b)=>(a.hora||"99").localeCompare(b.hora||"99"));
+      cells+=`<div class="cal-cell ${ds===todayStr?"today":""}">
+        <div class="cal-d">${d}</div>
+        <div class="cal-items">${items.map(t=>{
+          const r=(t.tipo==="reunion");
+          const cls=r?"reunion":(t.status==="completada"?"done":t.prio);
+          return `<div class="cal-it ${cls}" data-open="${t.id}" title="${esc(t.title)}">${t.hora?`<b>${esc(t.hora)}</b> `:""}${r?"📅 ":""}${esc(t.title)}</div>`;
+        }).join("")}</div>
+      </div>`;
+    }
+    $("#view").innerHTML=`
+      <div class="cal-bar">
+        <button class="iconbtn" id="calPrev">‹</button>
+        <h3 class="cal-title">${MESES[calM]} ${calY}</h3>
+        <button class="iconbtn" id="calNext">›</button>
+        <button class="btn ghost sm" id="calToday">Hoy</button>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn" id="calAddTask">＋ Tarea</button>
+          <button class="btn" id="calAddMeet" style="background:var(--accent-deep)">＋ Reunión</button>
+        </div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--red)"></span>Alta</span>
+        <span><span class="dot" style="background:var(--amber)"></span>Media</span>
+        <span><span class="dot" style="background:var(--gray)"></span>Baja</span>
+        <span><span class="dot" style="background:var(--accent)"></span>Reunión</span>
+        <span><span class="dot" style="background:var(--green)"></span>Completada</span>
+      </div>
+      <div class="cal-grid-head">${DIAS.map(d=>`<div>${d}</div>`).join("")}</div>
+      <div class="cal-grid">${cells}</div>`;
+    $("#calPrev").onclick=()=>{ calM--; if(calM<0){calM=11;calY--;} render(); };
+    $("#calNext").onclick=()=>{ calM++; if(calM>11){calM=0;calY++;} render(); };
+    $("#calToday").onclick=()=>{ const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); render(); };
+    $("#calAddTask").onclick=()=>editTask(null,"tarea");
+    $("#calAddMeet").onclick=()=>editTask(null,"reunion");
+    $$("[data-open]").forEach(el=>el.onclick=()=>editTask(+el.dataset.open));
+  }
+
+  // ---------- Modal ----------
+  function openModal(title,body,onSave,onDelete){
+    $("#modal").innerHTML=`<div class="modal-top"><h3>${esc(title)}</h3><button id="mClose">✕</button></div>
+      <div class="modal-body">${body}</div>
+      <div class="modal-foot"><div>${onDelete?'<button class="btn ghost" id="mDel" style="color:var(--red);border-color:#f3c6c6">Eliminar</button>':""}</div>
+      <div style="display:flex;gap:8px"><button class="btn ghost" id="mCancel">Cancelar</button><button class="btn" id="mSave">Guardar</button></div></div>`;
+    $("#overlay").classList.add("show");
+    $("#mClose").onclick=$("#mCancel").onclick=closeModal;
+    $("#mSave").onclick=onSave;
+    if(onDelete)$("#mDel").onclick=onDelete;
+  }
+  function closeModal(){ $("#overlay").classList.remove("show"); }
+  $("#overlay").onclick=e=>{ if(e.target.id==="overlay") closeModal(); };
+
+  // ---------- Export / Import ----------
+  // ---------- Datos: engranaje, exportar/importar ----------
+  const gearBtn=$("#gearBtn"), dataMenu=$("#dataMenu");
+  gearBtn.onclick=(e)=>{ e.stopPropagation(); dataMenu.hidden=!dataMenu.hidden; };
+  document.addEventListener("click",()=>{ dataMenu.hidden=true; });
+  dataMenu.onclick=(e)=>{ e.stopPropagation(); const a=e.target.closest("[data-act]"); if(!a)return; dataMenu.hidden=true;
+    if(a.dataset.act==="json") exportJSON();
+    else if(a.dataset.act==="import") $("#importFile").click();
+    else if(a.dataset.act==="excel") exportExcel();
+    else if(a.dataset.act==="cloudpull"){
+      (async()=>{ const c=await pullCloud(); if(c&&Array.isArray(c.proyectos)){ DATA=normalize(c); try{localStorage.setItem(KEY,JSON.stringify(DATA));}catch(e){} render(); setSync("☁ Traído de la nube"); alert("Datos traídos de la nube."); } else alert("La nube no tiene datos todavía (o no está conectada)."); })();
+    }
+    else if(a.dataset.act==="cloudpush"){
+      if(confirm("Subir tus datos actuales a la nube (reemplaza lo que haya allá). ¿Continuar?")){ pushCloud(); alert("Datos subidos a la nube."); }
+    }
+    else if(a.dataset.act==="logout"){ doLogout(); }
+    else if(a.dataset.act==="reset"){
+      if(confirm("Esto reemplazará todo con los datos originales del Excel (perderás los cambios que hayas hecho en el tablero) y arrancará la facturación en diciembre 2025. ¿Continuar?")){
+        DATA=normalize({ proyectos: JSON.parse(JSON.stringify(SEED_PROYECTOS)), tareas: [] });
+        save(); current="facturacion"; render();
+      }
+    }
+  };
+  function exportJSON(){
+    const blob=new Blob([JSON.stringify(DATA,null,2)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    a.download="centro-control-"+new Date().toISOString().slice(0,10)+".json"; a.click();
+  }
+  $("#importFile").onchange=e=>{ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); if(!d.proyectos) throw 0; DATA=normalize(d); save(); render(); alert("Datos importados."); }catch(err){ alert("Archivo no válido."); } }; r.readAsText(f); e.target.value=""; };
+
+  function loadXLSX(){
+    return new Promise((res,rej)=>{
+      if(window.XLSX) return res(window.XLSX);
+      const s=document.createElement("script");
+      s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+      s.onload=()=>res(window.XLSX); s.onerror=()=>rej(); document.head.appendChild(s);
+    });
+  }
+  async function exportExcel(){
+    let XLSX;
+    try{ XLSX=await loadXLSX(); }catch(e){ alert("No se pudo cargar el generador de Excel (¿sin internet?). Se descargará un CSV en su lugar."); return exportCSVfallback(); }
+    const wb=XLSX.utils.book_new();
+    // Proyectos
+    const proj=DATA.proyectos.map(p=>({Proyecto:p.proyecto,Estado:(p.estado||"activo"),CECO:p.ceco,Responsable:p.responsable,Analista:p.analista,Personal:p.personal,"ID Nómina":p.idNomina||"",Contrato:p.contrato,Versión:p.version,Vigencia:p.vigencia,Facturación:p.facturacion,Nómina:p.nomina,Traza:p.traza,GEO:p.geo,Incremento:p.incremento,Observaciones:p.observaciones}));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(proj), "Proyectos");
+    // Clientes
+    const cli=DATA.proyectos.map(p=>{ const o={Cliente:p.proyecto,CECO:p.ceco,Estado:(p.estado||"activo"),"Fecha ingreso":p.fechaIngreso||"","Fecha retiro":p.fechaRetiro||"",NIT:p.nit||"",Contacto:p.contacto||"",Teléfono:p.telefono||"",Correo:p.correo||"",Dirección:p.direccion||""}; (DATA.cliCols||[]).forEach(c=>{ o[c.label]=(p.extra&&p.extra[c.id])||""; }); return o; });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(cli), "Clientes");
+    // Contratos
+    const con=DATA.proyectos.map(p=>({Proyecto:p.proyecto,CECO:p.ceco,"Estado contrato":p.contrato,"Versión / Otrosí":p.version,Vigencia:p.vigencia,Alerta:vigInfo(p.vigencia).txt}));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(con), "Contratos");
+    // Facturación (matriz ancha: una fila por cliente, columnas por quincena)
+    const MP=maxPer(); const months=periodMonths();
+    const head=["Cliente","ID Nómina"];
+    for(let i=0;i<MP;i++){ const L=periodLabel(i,months); const t=`${L.main}${L.sub?" "+L.sub:""}`; head.push(t+" Prefactura",t+" Provisión",t+" Nómina",t+" ID Nómina",t+" Valor"); }
+    const facRows=[head];
+    DATA.proyectos.forEach(p=>{
+      const row=[p.proyecto,p.idNomina||""];
+      for(let i=0;i<MP;i++){ const y=(p.periodos||[])[i]||{}; row.push(y.prefactura||"",y.provision||"",y.nomina||"",y.idnomina||"",fmtVal(y.valor||"")); }
+      facRows.push(row);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(facRows), "Facturación");
+    // Tareas
+    const tar=DATA.tareas.map(t=>({Tipo:(t.tipo==="reunion"?"Reunión":"Tarea"),Título:t.title,Cliente:t.client||"",Responsables:(taskResps(t).join(", ")),Fecha:t.date||"",Hora:t.hora||"",Prioridad:t.prio,Estado:TSTATUS[t.status]||t.status}));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(tar.length?tar:[{Tipo:"",Título:"",Cliente:"",Responsable:"",Fecha:"",Hora:"",Prioridad:"",Estado:""}]), "Tareas");
+    XLSX.writeFile(wb, "centro-control-"+new Date().toISOString().slice(0,10)+".xlsx");
+  }
+  function exportCSVfallback(){
+    const rows=[["Proyecto","Estado","CECO","Responsable","Analista","Personal","Contrato","Vigencia"]];
+    DATA.proyectos.forEach(p=>rows.push([p.proyecto,(p.estado||"activo"),p.ceco,p.responsable,p.analista,p.personal,p.contrato,p.vigencia]));
+    const csv=rows.map(r=>r.map(c=>`"${String(c==null?"":c).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="proyectos.csv"; a.click();
+  }
+
+  // ---------- Búsqueda ----------
+  $("#search").oninput=e=>{ searchTerm=e.target.value; if(window.__redraw)window.__redraw(); };
+
+  // ---------- Iconos ----------
+  function svgHome(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M3 9l7-6 7 6M5 8v8h10V8" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';}
+  function svgGrid(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="3" y="3" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.5"/></svg>';}
+  function svgUsers(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.5"/><path d="M13 5a3 3 0 0 1 0 6M14 17c0-2.4-1.2-4-3-4.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';}
+  function svgContact(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="3" y="4" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="9" r="1.8" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 14c0-1.4 1.1-2.3 2.5-2.3s2.5.9 2.5 2.3M12.5 8h3M12.5 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';}
+  function svgDoc(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M5 3h7l3 3v11H5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 3v3h3M7.5 10h5M7.5 13h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';}
+  function svgBill(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M5 3h10v14l-2.5-1.5L10 17l-2.5-1.5L5 17z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7h4M8 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';}
+  function svgCheck2(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+  function svgCal(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 8h14M7 2v3M13 2v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';}
+  function svgId(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="9.5" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 14c0-1.6 1.3-2.6 3-2.6s3 1 3 2.6M12 8h4M12 11h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';}
+  function svgNote(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M4 3h9l4 4v10H4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 3v4h4M6.5 10h7M6.5 13h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';}
+  function svgSwap(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M4 7h11l-3-3M16 13H5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+  function svgLog(){return '<svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M5 3h10v14H5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7h5M8 10h5M8 13h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';}
+  function svgPen(){return '<svg viewBox="0 0 16 16" fill="none" width="15" height="15"><path d="M11.5 2.5l2 2L6 12l-3 1 1-3 7.5-7.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>';}
+  function svgTrash(){return '<svg viewBox="0 0 16 16" fill="none" width="15" height="15"><path d="M3 4.5h10M6.5 4V3h3v1M4.5 4.5l.5 8h6l.5-8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+
+  // ---------- Notas ----------
+  const NOTE_COLORS=[
+    {id:"amarillo",label:"General",bg:"#FEF9C3",bd:"#CA8A04"},
+    {id:"rojo",label:"Urgente",bg:"#FEE2E2",bd:"#DC2626"},
+    {id:"naranja",label:"Importante",bg:"#FFEDD5",bd:"#EA580C"},
+    {id:"verde",label:"Hecho / OK",bg:"#DCFCE7",bd:"#16A34A"},
+    {id:"azul",label:"Información",bg:"#DBEAFE",bd:"#2563EB"},
+    {id:"morado",label:"Idea",bg:"#EDE9FE",bd:"#7C3AED"}
+  ];
+  const noteColor=id=>NOTE_COLORS.find(c=>c.id===id)||NOTE_COLORS[0];
+  let notaFilter="";
+  function renderNotas(){
+    const counts={}; DATA.notas.forEach(n=>{ counts[n.color]=(counts[n.color]||0)+1; });
+    const chip=(id,label,c)=>`<button class="${notaFilter===id?"on":""}" data-nf="${id}"><span class="ndot" style="background:${id?noteColor(id).bd:"var(--ink)"}"></span>${label}${c!=null?`<span class="cnt">${c}</span>`:""}</button>`;
+    $("#view").innerHTML=`
+      <div class="filterbar">
+        <button class="btn" id="addNota">＋ Nueva nota</button>
+        <div class="top-search" style="position:relative;margin:0">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-soft)"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input id="notaSearch" type="search" placeholder="Buscar notas…" value="${esc(searchTerm)}" style="width:260px;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:9px;font-size:13px">
+        </div>
+      </div>
+      <div class="seg" style="margin-bottom:16px">
+        ${chip("","Todas",DATA.notas.length)}
+        ${NOTE_COLORS.map(c=>chip(c.id,c.label,counts[c.id]||0)).join("")}
+      </div>
+      <div class="notes-grid" id="notesGrid"></div>`;
+    $$("[data-nf]").forEach(b=>b.onclick=()=>{ notaFilter=b.dataset.nf; renderNotas(); });
+    $("#addNota").onclick=()=>editNota(null);
+    $("#notaSearch").oninput=e=>{ searchTerm=e.target.value; drawNotes(); };
+    function drawNotes(){
+      const q=searchTerm.toLowerCase().trim();
+      const rows=DATA.notas.filter(n=>(!notaFilter||n.color===notaFilter)&&(!q||((n.title||"")+" "+(n.body||"")).toLowerCase().includes(q)));
+      const canEdit = userRole==="admin";
+      $("#notesGrid").innerHTML = rows.length ? rows.map(n=>{const c=noteColor(n.color);return `
+        <div class="note-card ${canEdit?"":"noedit"}" style="background:${c.bg};border-color:${c.bd}" data-id="${n.id}" ${canEdit?`data-en="${n.id}" draggable="true"`:""}>
+          <div class="note-card-top">${canEdit?'<span class="note-grip" title="Arrastra para mover">⠿</span>':""}<span class="note-imp" style="background:${c.bd}">${esc(c.label)}</span>
+            ${userRole==="admin"?`<button class="note-x" data-dn="${n.id}" title="Eliminar">✕</button>`:""}</div>
+          ${n.title?`<div class="note-title">${esc(n.title)}</div>`:""}
+          <div class="note-body">${esc(n.body||"")}</div>
+          <div class="note-date">${esc(fmtStamp(n.created))}</div>
+        </div>`;}).join("") : `<div class="empty" style="grid-column:1/-1"><h4>Sin notas</h4><p>Crea tu primera nota con “＋ Nueva nota”.</p></div>`;
+      if(canEdit){
+        $$("[data-en]").forEach(el=>el.onclick=e=>{ if(e.target.closest("[data-dn]")||e.target.closest(".note-grip"))return; editNota(el.dataset.en); });
+        let dragId=null;
+        $$("#notesGrid .note-card").forEach(card=>{
+          card.addEventListener("dragstart",e=>{ dragId=card.dataset.id; card.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; });
+          card.addEventListener("dragend",()=>{ card.classList.remove("dragging"); $$(".note-card").forEach(c=>c.classList.remove("drop-target")); });
+          card.addEventListener("dragover",e=>{ e.preventDefault(); if(card.dataset.id!=dragId) card.classList.add("drop-target"); });
+          card.addEventListener("dragleave",()=>card.classList.remove("drop-target"));
+          card.addEventListener("drop",e=>{ e.preventDefault(); const tId=card.dataset.id; if(dragId&&dragId!=tId){
+            const from=DATA.notas.findIndex(n=>n.id==dragId); const m=DATA.notas.splice(from,1)[0];
+            const to=DATA.notas.findIndex(n=>n.id==tId); DATA.notas.splice(to,0,m); save(); drawNotes();
+          } });
+        });
+      }
+      $$("[data-dn]").forEach(b=>b.onclick=()=>{ if(confirm("¿Eliminar esta nota?")){ const nn=DATA.notas.find(x=>x.id==b.dataset.dn); DATA.notas=DATA.notas.filter(x=>x.id!=b.dataset.dn); logAction(`eliminó la nota "${nn?nn.title||"(sin título)":""}"`); save(); drawNotes(); renderNav(); } });
+    }
+    drawNotes();
+  }
+  function editNota(id){
+    const n = id==null ? {id:Date.now(),title:"",body:"",color:"amarillo",created:new Date().toISOString()} : DATA.notas.find(x=>x.id==id);
+    openModal(id==null?"Nueva nota":"Editar nota",`
+      <div class="field" style="margin-bottom:12px"><label>Título</label><input id="n-title" value="${esc(n.title||"")}" placeholder="Título de la nota"></div>
+      <div class="field" style="margin-bottom:12px"><label>Nota</label><textarea id="n-body" style="min-height:130px" placeholder="Escribe aquí…">${esc(n.body||"")}</textarea></div>
+      <div class="field"><label>Importancia (color)</label>
+        <div class="color-picker" id="n-colors">${NOTE_COLORS.map(c=>`<button type="button" class="color-opt ${n.color===c.id?"sel":""}" data-color="${c.id}" style="background:${c.bg};border-color:${c.bd}" title="${esc(c.label)}"><span style="color:${c.bd}">${esc(c.label)}</span></button>`).join("")}</div>
+      </div>
+      ${id!=null?`<div class="ceco" style="margin-top:10px">Creada: ${esc(fmtStamp(n.created))}</div>`:""}`,
+      ()=>{
+        n.title=$("#n-title").value.trim(); n.body=$("#n-body").value.trim();
+        if(!n.title && !n.body){ alert("Escribe algo en la nota."); return; }
+        if(id==null) DATA.notas.unshift(n);
+        logAction(`creó la nota "${n.title||"(sin título)"}"`);
+        save(); closeModal(); render();
+      }, id!=null?()=>{ if(confirm("¿Eliminar esta nota?")){ DATA.notas=DATA.notas.filter(x=>x.id!=id); save(); closeModal(); render(); } }:null);
+    let pick=n.color;
+    $$("#n-colors .color-opt").forEach(b=>b.onclick=()=>{ pick=b.dataset.color; n.color=pick; $$("#n-colors .color-opt").forEach(x=>x.classList.toggle("sel",x.dataset.color===pick)); });
+  }
+
+  // ---------- Entrega de turno ----------
+  let entFilter="";
+  function coordNames(){ return [...new Set(DATA.proyectos.map(p=>p.responsable).filter(Boolean))].sort(); }
+  function renderEntrega(){
+    $("#view").innerHTML=`
+      <div class="filterbar">
+        <button class="btn" id="addEnt">＋ Nueva entrega de turno</button>
+        <select id="entF"><option value="">Todas</option><option value="pendiente">Por leer/atender</option><option value="leido">Atendidas</option></select>
+        <div class="top-search" style="position:relative;margin:0">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-soft)"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input id="entSearch" type="search" placeholder="Buscar en las entregas…" value="${esc(searchTerm)}" style="width:280px;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:9px;font-size:13px">
+        </div>
+      </div>
+      <div id="entList"></div>`;
+    $("#addEnt").onclick=()=>newEntrega();
+    $("#entF").onchange=()=>drawEnt();
+    $("#entSearch").oninput=e=>{ searchTerm=e.target.value; drawEnt(); };
+    function drawEnt(){
+      const f=$("#entF").value, q=searchTerm.toLowerCase().trim();
+      const rows=(DATA.entregas||[]).filter(e=>{
+        if(f && (f==="leido"?e.estado!=="leido":e.estado==="leido")) return false;
+        if(q){ const hay=[(e.from||""),(e.turno||""),(e.novedades||""),...((e.respuestas||[]).map(r=>(r.by||"")+" "+(r.text||"")))].join(" ").toLowerCase(); if(!hay.includes(q)) return false; }
+        return true;
+      }).sort((a,b)=>(b.created||"").localeCompare(a.created||""));
+      $("#entList").innerHTML = rows.length ? rows.map(e=>{
+        const leido=e.estado==="leido";
+        return `<div class="ent-card ${leido?"leido":"pend"}">
+          <div class="ent-head">
+            <div><span class="ent-from">${svgSwap()} ${esc(e.from||"Coordinador")}</span><div class="ent-date">${esc(fmtStamp(e.created))}${e.turno?` · ${esc(e.turno)}`:""}</div></div>
+            <span class="tag ${leido?"green":"amber"}">${leido?"Atendida":"Por atender"}</span>
+          </div>
+          <div class="ent-nov"><b>Novedades del turno:</b><div class="ent-nov-body">${esc(e.novedades||"")}</div></div>
+          <div class="ent-replies">
+            ${(e.respuestas||[]).map(r=>`<div class="ent-reply"><div class="ent-reply-top"><b>${esc(r.by||"Coordinador")}</b> <span class="ceco">${esc(fmtStamp(r.ts))}</span></div><div>${esc(r.text)}</div></div>`).join("")}
+          </div>
+          <div class="ent-actions">
+            <input class="ent-reply-in" data-rep="${e.id}" placeholder="Escribe tu respuesta / lo que atendiste…">
+            <button class="btn sm" data-repbtn="${e.id}">Responder</button>
+            ${!leido?`<button class="btn ghost sm" data-read="${e.id}">✓ Marcar atendida</button>`:`<button class="btn ghost sm" data-unread="${e.id}">Reabrir</button>`}
+            <button class="iconbtn del" data-delent="${e.id}" title="Eliminar">${svgTrash()}</button>
+          </div>
+        </div>`;
+      }).join("") : `<div class="empty"><h4>Sin entregas de turno</h4><p>El coordinador que sale registra sus novedades con “＋ Nueva entrega de turno”.</p></div>`;
+      const sendReply=(id)=>{
+        const inp=document.querySelector(`[data-rep="${id}"]`); const txt=(inp.value||"").trim(); if(!txt)return;
+        const e=DATA.entregas.find(x=>x.id==id); e.respuestas=e.respuestas||[];
+        e.respuestas.push({by:(userName||"Coordinador"),text:txt,ts:new Date().toISOString()});
+        e.estado="leido"; logAction(`respondió una entrega de turno de ${e.from||"coordinador"}`); save(); drawEnt(); renderNav();
+      };
+      $$("[data-repbtn]").forEach(b=>b.onclick=()=>sendReply(b.dataset.repbtn));
+      $$(".ent-reply-in").forEach(i=>i.addEventListener("keydown",ev=>{ if(ev.key==="Enter") sendReply(i.dataset.rep); }));
+      $$("[data-read]").forEach(b=>b.onclick=()=>{ DATA.entregas.find(x=>x.id==b.dataset.read).estado="leido"; save(); drawEnt(); renderNav(); });
+      $$("[data-unread]").forEach(b=>b.onclick=()=>{ DATA.entregas.find(x=>x.id==b.dataset.unread).estado="pendiente"; save(); drawEnt(); renderNav(); });
+      $$("[data-delent]").forEach(b=>b.onclick=()=>{ if(confirm("¿Eliminar esta entrega de turno?")){ DATA.entregas=DATA.entregas.filter(x=>x.id!=b.dataset.delent); save(); drawEnt(); renderNav(); } });
+    }
+    drawEnt();
+  }
+  function newEntrega(){
+    const e={id:Date.now(),from:"",turno:"",novedades:"",estado:"pendiente",respuestas:[],created:new Date().toISOString()};
+    openModal("Nueva entrega de turno",`
+      <div class="ceco" style="margin-bottom:12px">Entrega registrada por <b style="color:var(--ink)">${esc(userName||"Coordinador")}</b></div>
+      <div class="field" style="margin-bottom:12px"><label>Turno (opcional)</label><input id="e-turno" placeholder="Ej: Mañana / Tarde / 6am-2pm"></div>
+      <div class="field"><label>Novedades del turno</label><textarea id="e-nov" style="min-height:150px" placeholder="Escribe lo que el coordinador que entra debe saber: pendientes, incidencias, clientes a los que hacer seguimiento, etc."></textarea></div>`,
+      ()=>{
+        e.from=userName||"Coordinador"; e.turno=$("#e-turno").value.trim(); e.novedades=$("#e-nov").value.trim();
+        if(!e.novedades){ alert("Escribe las novedades del turno."); return; }
+        DATA.entregas.push(e); logAction(`registró una entrega de turno (${e.from})`); save(); closeModal(); render();
+      }, null);
+  }
+
+  // ---------- Registro de actividad (solo líder) ----------
+  let regUser="";
+  function renderRegistro(){
+    if(userRole!=="admin"){ current="tareas"; render(); return; }
+    const users=[...new Set((DATA.audit||[]).map(a=>a.who))].sort();
+    $("#view").innerHTML=`
+      <div class="filterbar">
+        <select id="regUser"><option value="">Todos los usuarios</option>${users.map(u=>`<option ${regUser===u?"selected":""}>${esc(u)}</option>`).join("")}</select>
+        <div class="top-search" style="position:relative;margin:0">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-soft)"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input id="regSearch" type="search" placeholder="Buscar en el registro…" value="${esc(searchTerm)}" style="width:260px;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:9px;font-size:13px">
+        </div>
+        <button class="btn ghost" id="regClear" style="margin-left:auto;color:var(--red);border-color:#f3c6c6">Vaciar registro</button>
+      </div>
+      <div class="panel flush"><div class="tbl-wrap" style="max-height:calc(100vh - 200px)"><table id="regTbl"></table></div></div>
+      <div class="ceco" id="regCount" style="margin-top:8px"></div>`;
+    const draw=()=>{
+      const q=searchTerm.toLowerCase().trim();
+      const rows=(DATA.audit||[]).slice().reverse().filter(a=>(!regUser||a.who===regUser)&&(!q||((a.who||"")+" "+(a.what||"")).toLowerCase().includes(q)));
+      $("#regTbl").innerHTML=`<thead><tr><th style="width:180px">Fecha y hora</th><th style="width:180px">Usuario</th><th>Acción</th></tr></thead>
+        <tbody>${rows.map(a=>`<tr>
+          <td class="ceco">${esc(fmtStamp(a.ts))}</td>
+          <td>${who(a.who)}${a.role==="admin"?' <span class="tag blue" style="font-size:9px">Líder</span>':""}</td>
+          <td>${esc(a.what)}</td>
+        </tr>`).join("")||`<tr><td colspan="3" class="empty">Sin actividad registrada todavía.</td></tr>`}</tbody>`;
+      $("#regCount").textContent=`${rows.length} registros`;
+    };
+    $("#regUser").onchange=e=>{ regUser=e.target.value; draw(); };
+    $("#regSearch").oninput=e=>{ searchTerm=e.target.value; draw(); };
+    $("#regClear").onclick=()=>{ if(confirm("¿Vaciar todo el registro de actividad? No se puede deshacer.")){ DATA.audit=[]; save(); render(); } };
+    draw();
+  }
+
+  // ---------- Personal (matriz) ----------
+  let perSearch="", perColsOpen=false;
+  function renderPersonal(){
+    if(!PERSONAL.cols || !PERSONAL.cols.length){
+      $("#view").innerHTML=`
+        <div class="empty" style="padding:60px 20px">
+          <h4>Matriz de personal activo</h4>
+          <p style="margin-bottom:18px">Sube tu archivo de Excel con el personal. Podrás elegir qué columnas ver, buscar en todas las filas, y reemplazarlo cuando cambie.</p>
+          <button class="btn" id="perUp">⬆ Subir Excel de personal</button>
+          <input type="file" id="perFile" accept=".xlsx,.xls,.csv" hidden>
+        </div>`;
+      $("#perUp").onclick=()=>$("#perFile").click();
+      $("#perFile").onchange=perImport;
+      return;
+    }
+    const cols=PERSONAL.cols, hidden=new Set(PERSONAL.hidden||[]);
+    const vis=cols.map((c,i)=>({c,i})).filter(x=>!hidden.has(x.i));
+    $("#view").innerHTML=`
+      <div class="filterbar">
+        <div class="top-search" style="position:relative;margin:0">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-soft)"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input id="perSearch" type="search" placeholder="Buscar en todo el personal…" value="${esc(perSearch)}" style="width:320px;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:9px;font-size:13px">
+        </div>
+        <button class="btn ghost" id="perColsBtn">Columnas (${vis.length}/${cols.length}) ▾</button>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn ghost" id="perReplace">⬆ Reemplazar</button>
+          <button class="btn ghost" id="perDel" style="color:var(--red);border-color:#f3c6c6">🗑 Eliminar</button>
+        </div>
+        <input type="file" id="perFile" accept=".xlsx,.xls,.csv" hidden>
+      </div>
+      ${perColsOpen?`<div class="panel" style="margin-bottom:14px"><div class="panel-body"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><b style="font-size:13px">Mostrar columnas</b><span><button class="btn ghost sm" id="perAll">Todas</button> <button class="btn ghost sm" id="perNone">Ninguna</button></span></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 14px">${cols.map((c,i)=>`<label class="dimchk"><input type="checkbox" data-pcol="${i}" ${hidden.has(i)?"":"checked"}> ${esc(c||"(col "+(i+1)+")")}</label>`).join("")}</div></div></div>`:""}
+      <div class="panel flush"><div class="tbl-wrap" style="max-height:calc(100vh - 230px)"><table id="perTbl"></table></div></div>
+      <div class="ceco" id="perCount" style="margin-top:8px"></div>`;
+    const draw=()=>{
+      const q=perSearch.toLowerCase().trim();
+      const rows=PERSONAL.rows.filter(r=>!q||r.some(c=>String(c==null?"":c).toLowerCase().includes(q)));
+      $("#perTbl").innerHTML=`<thead><tr><th style="min-width:44px">#</th>${vis.map(x=>`<th>${esc(x.c||"")}</th>`).join("")}</tr></thead>
+        <tbody>${rows.slice(0,1500).map((r,ri)=>`<tr><td class="ceco">${ri+1}</td>${vis.map(x=>`<td>${esc(r[x.i]==null?"":r[x.i])}</td>`).join("")}</tr>`).join("")||`<tr><td colspan="${vis.length+1}" class="empty">Sin coincidencias.</td></tr>`}</tbody>`;
+      $("#perCount").textContent = `${rows.length} de ${PERSONAL.rows.length} filas`+(rows.length>1500?" (mostrando las primeras 1500)":"")+(PERSONAL.name?` · archivo: ${PERSONAL.name}`:"");
+    };
+    $("#perSearch").oninput=e=>{ perSearch=e.target.value; draw(); };
+    $("#perColsBtn").onclick=()=>{ perColsOpen=!perColsOpen; renderPersonal(); };
+    $("#perReplace").onclick=()=>$("#perFile").click();
+    $("#perFile").onchange=perImport;
+    $("#perDel").onclick=()=>{ if(confirm("¿Eliminar la matriz de personal? Podrás subir otra después.")){ PERSONAL={name:"",cols:[],rows:[],hidden:[]}; savePersonal(); render(); } };
+    if(perColsOpen){
+      $$("[data-pcol]").forEach(chk=>chk.onchange=()=>{ const i=+chk.dataset.pcol; const h=new Set(PERSONAL.hidden||[]); if(chk.checked)h.delete(i); else h.add(i); PERSONAL.hidden=[...h]; savePersonal(); renderPersonal(); });
+      $("#perAll").onclick=()=>{ PERSONAL.hidden=[]; savePersonal(); renderPersonal(); };
+      $("#perNone").onclick=()=>{ PERSONAL.hidden=PERSONAL.cols.map((c,i)=>i); savePersonal(); renderPersonal(); };
+    }
+    draw();
+  }
+  async function perImport(e){
+    const f=e.target.files[0]; if(!f) return; e.target.value="";
+    let XLSX; try{ XLSX=await loadXLSX(); }catch(err){ alert("No se pudo cargar el lector de Excel (¿sin internet?)."); return; }
+    const buf=await f.arrayBuffer();
+    const wb=XLSX.read(buf,{type:"array"});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const aoa=XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:false});
+    if(!aoa.length){ alert("El archivo está vacío."); return; }
+    const cols=(aoa[0]||[]).map(c=>String(c==null?"":c));
+    const rows=aoa.slice(1).filter(r=>r.some(c=>String(c==null?"":c).trim()!==""));
+    PERSONAL={ name:f.name, cols, rows, hidden:[] };
+    logAction(`subió la matriz de personal (${rows.length} filas)`); save(); savePersonal(); perSearch=""; perColsOpen=false; render();
+    alert(`Cargado: ${rows.length} filas, ${cols.length} columnas.`);
+  }
+
+  // ---------- Login ----------
+  // Cambia aquí los usuarios y contraseñas (la contraseña puede ser de 1 carácter):
+  const ACCOUNTS=[
+    {user:"diego",   pass:"1", role:"admin", name:"Diego (Líder)"},
+    {user:"jhon",    pass:"1", role:"coord", name:"Jhon"},
+    {user:"julian",  pass:"1", role:"coord", name:"Julian"},
+    {user:"valeria", pass:"1", role:"coord", name:"Valeria"}
+  ];
+  const AUTHKEY="qh_auth_v2";
+  let started=false, userRole="admin", userName="";
+  function doLogout(){ try{ localStorage.removeItem(AUTHKEY); }catch(e){} location.reload(); }
+  function showLogin(){
+    $("#loginScreen").hidden=false;
+    const tryLogin=()=>{
+      const u=$("#lg-user").value.trim().toLowerCase(), p=$("#lg-pass").value;
+      const acc=ACCOUNTS.find(a=>a.user===u && a.pass===p);
+      if(acc){ userRole=acc.role; userName=acc.name; try{localStorage.setItem(AUTHKEY,JSON.stringify({role:acc.role,name:acc.name}));}catch(e){} $("#loginScreen").hidden=true; startApp(); }
+      else{ $("#lg-error").textContent="Usuario o contraseña incorrectos."; }
+    };
+    $("#lg-enter").onclick=tryLogin;
+    $("#lg-user").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#lg-pass").focus(); });
+    $("#lg-pass").addEventListener("keydown",e=>{ if(e.key==="Enter") tryLogin(); });
+    setTimeout(()=>$("#lg-user").focus(),80);
+  }
+  function startApp(){
+    if(started) return; started=true;
+    document.body.classList.toggle("role-coord", userRole!=="admin");
+    const sec=SECTIONS.find(s=>s.id===current);
+    if(userRole!=="admin" && sec && !COORD_SECTIONS.includes(current)) current="tareas";
+    render();
+    initCloud();
+  }
+
+  // ---------- Init ----------
+  let authed=false;
+  try{ const a=JSON.parse(localStorage.getItem(AUTHKEY)); if(a&&a.role){ userRole=a.role; userName=a.name||""; authed=true; } }catch(e){}
+  if(authed) startApp(); else showLogin();
+})();
+</script>
+</body>
+</html>
